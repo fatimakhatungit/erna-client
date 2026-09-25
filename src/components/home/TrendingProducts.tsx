@@ -2,20 +2,31 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Heart,
   ArrowLeftRight,
   Eye,
   Check,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  ShoppingCart,
 } from "lucide-react";
+import { motion } from "framer-motion";
+
 import { Swiper, SwiperSlide } from "swiper/react";
+import type { Swiper as SwiperType } from "swiper";
 
 import "swiper/css";
+import { useWishlist } from "@/context/WishlistContext";
+import { useRouter } from "next/navigation";
+import { Button } from "@heroui/react";
+import { useCart } from "@/context/CartContext";
 
 /* =========================================================
    TYPES
-   ========================================================= */
+========================================================= */
 
 type Product = {
   _id: string;
@@ -42,24 +53,20 @@ type ApiResponse = {
 
 /* =========================================================
    FALLBACK IMAGE
-   ========================================================= */
+========================================================= */
 
-const FALLBACK_IMAGE =
-  "/assets/product/product_2_1.png";
+const FALLBACK_IMAGE = "/placeholder.svg";
 
 /* =========================================================
    IMAGE HELPER
-   ========================================================= */
+========================================================= */
 
 const getProductImage = (image?: string) => {
   if (!image) {
     return FALLBACK_IMAGE;
   }
 
-  if (
-    image.includes("example.com") ||
-    image.trim() === ""
-  ) {
+  if (image.includes("example.com") || image.trim() === "") {
     return FALLBACK_IMAGE;
   }
 
@@ -68,13 +75,10 @@ const getProductImage = (image?: string) => {
 
 /* =========================================================
    OLD PRICE CALCULATION
-   ========================================================= */
+========================================================= */
 
-const getOldPrice = (
-  price: number,
-  discount?: number
-) => {
-  if (!discount || discount <= 0) {
+const getOldPrice = (price: number, discount?: number) => {
+  if (!discount || discount <= 0 || discount >= 100) {
     return null;
   }
 
@@ -82,449 +86,436 @@ const getOldPrice = (
 };
 
 /* =========================================================
-   PRODUCT CARD
-   ========================================================= */
+   RATING STARS HELPER
+========================================================= */
 
-function ProductCard({
-  product,
-}: {
-  product: Product;
-}) {
-  const image = getProductImage(
-    product.images?.[0]
-  );
+function getRatingStars(rating = 0) {
+  const rounded = Math.round(rating);
+  return Array.from({ length: 5 }, (_, index) => (index < rounded ? "★" : "☆"));
+}
 
-  const oldPrice = getOldPrice(
-    Number(product.price),
-    product.discount
-  );
+/* =========================================================
+   PRODUCT CARD COMPONENT
+========================================================= */
 
+function ProductCard({ product }: { product: Product }) {
+  const image = getProductImage(product.images?.[0]);
+  const oldPrice = getOldPrice(Number(product.price), product.discount);
   const rating = Number(product.rating || 0);
-
   const stock = Number(product.stock || 0);
+  const router = useRouter();
+  const { addToCart } = useCart();
+  const { isWishlisted, toggleWishlist, pendingId, isAuthenticated } =
+    useWishlist();
+
+  // Add to Cart loading states
+  const [adding, setAdding] = useState(false);
+  const [added, setAdded] = useState(false);
+
+  const wishlisted = isWishlisted(product._id);
+  const wishlistPending = pendingId === product._id;
+
+  const handleToggleWishlist = () => {
+    if (!isAuthenticated) {
+      router.push("/login");
+      return;
+    }
+    void toggleWishlist(product._id);
+  };
+
+  const handleAddToCart = async () => {
+    if (adding || added) return;
+    setAdding(true);
+    await addToCart(product, 1);
+    setAdding(false);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
+  };
 
   return (
-    <div className="group relative overflow-hidden rounded-[8px] border border-[#e0e8f0] bg-[#f8fbff] p-3.5 transition duration-300 hover:-translate-y-1 hover:shadow-lg">
+    <motion.div
+      whileHover={{ y: -4 }}
+      transition={{ duration: 0.2 }}
+      className="group flex flex-col overflow-hidden rounded-xl border border-purple-100 bg-white p-4 shadow-sm shadow-purple-900/5 transition-shadow hover:shadow-md hover:shadow-purple-950/10"
+    >
+      {/* =================================================
+          IMAGE SECTION
+      ================================================= */}
 
-      {/* =====================================================
-          IMAGE
-          ===================================================== */}
-
-      <div className="relative flex h-[245px] items-center justify-center overflow-hidden rounded-[5px] bg-[#e3ebf4]">
-
+      <div className="relative flex h-[230px] items-center justify-center overflow-hidden rounded-lg bg-[#FAF5FF]">
         <Image
           src={image}
-          alt={product.name}
-          width={300}
-          height={300}
-          sizes="(max-width: 575px) 90vw, (max-width: 767px) 45vw, (max-width: 1023px) 30vw, (max-width: 1279px) 23vw, 16vw)"
-          className="h-full w-full object-contain p-6 transition duration-500 group-hover:scale-105"
+          alt={product.name || "Product image"}
+          width={220}
+          height={220}
+          className="h-[200px] w-[200px] object-contain transition-transform duration-500 group-hover:scale-105"
         />
 
-        {/* =================================================
-            DISCOUNT
-            ================================================= */}
+        {/* DISCOUNT BADGE */}
 
-        {product.discount &&
-          product.discount > 0 && (
-            <span className="absolute left-0 top-0 rounded-br-[16px] bg-[#ee3347] px-4 py-1.5 text-sm font-semibold text-white">
-              -{product.discount}%
-            </span>
-          )}
+        {product.discount !== undefined && product.discount > 0 && (
+          <span className="absolute left-0 top-0 rounded-br-xl bg-[#FD5B44] px-3 py-1 text-xs font-semibold text-white shadow-sm">
+            -{product.discount}%
+          </span>
+        )}
 
         {/* =================================================
-            ACTION BUTTONS
-            ================================================= */}
+            ACTION BUTTONS (HOVER)
+        ================================================= */}
 
         <div className="absolute right-3 top-3 flex translate-x-10 flex-col gap-2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100">
+          {/* Wishlist Button */}
 
-          {/* Wishlist */}
-
-          <Link
-            href="/wishlist"
-            aria-label="Add to wishlist"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-700 shadow-md transition hover:bg-red-500 hover:text-white"
+          <button
+            type="button"
+            aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+            onClick={handleToggleWishlist}
+            disabled={wishlistPending}
+            className={`flex h-9 w-9 items-center justify-center rounded-full shadow-md transition-colors ${
+              wishlisted
+                ? "bg-[#FD5B44] text-white"
+                : "bg-white text-purple-950 hover:bg-[#FD5B44] hover:text-white"
+            }`}
           >
-            <Heart size={17} />
-          </Link>
+            {wishlistPending ? (
+              <Loader2 size={17} className="animate-spin" />
+            ) : (
+              <Heart size={17} className={wishlisted ? "fill-current" : ""} />
+            )}
+          </button>
 
-          {/* Compare */}
+          {/* Compare Button */}
 
           <Link
             href="/compare"
             aria-label="Compare product"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-700 shadow-md transition hover:bg-red-500 hover:text-white"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-purple-950 shadow-md transition hover:bg-[#FD5B44] hover:text-white"
           >
             <ArrowLeftRight size={17} />
           </Link>
 
-          {/* Quick View */}
+          {/* Quick View Button */}
 
           <Link
-            href={`/shop-details/${product._id}`}
+            href={`/products/${product._id}`}
             aria-label="View product"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-700 shadow-md transition hover:bg-red-500 hover:text-white"
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-purple-950 shadow-md transition hover:bg-[#FD5B44] hover:text-white"
           >
             <Eye size={17} />
           </Link>
-
         </div>
       </div>
 
-      {/* =====================================================
-          CONTENT
-          ===================================================== */}
+      {/* =================================================
+          CONTENT SECTION
+      ================================================= */}
 
-      <div className="px-1.5 pb-2 pt-5">
+      <div className="flex flex-1 flex-col pt-4">
+        {/* PRODUCT NAME */}
 
-        {/* Product Name */}
-
-        <h3 className="min-h-[48px] text-[16px] font-semibold leading-[23px] text-[#252525]">
-
+        <h3 className="min-h-[48px] text-[15px] font-semibold leading-6 text-purple-950">
           <Link
             href={`/shop-details/${product._id}`}
-            className="transition hover:text-red-500"
+            className="transition-colors hover:text-[#FD5B44]"
           >
             {product.name}
           </Link>
-
         </h3>
 
         {/* =================================================
             RATING
-            ================================================= */}
+        ================================================= */}
 
-        <div className="mt-2 flex items-center gap-2">
-
+        <div className="mt-2 flex items-center gap-3">
           <div
-            className="flex items-center gap-[1px] text-[18px] leading-none text-[#ff5a4f]"
-            aria-label={`Rating ${rating} out of 5`}
+            className="flex gap-[1px] text-[16px] leading-none text-amber-500"
+            aria-label={`Rated ${rating} out of 5`}
           >
-            {"★★★★★"}
+            {getRatingStars(rating).map((star, index) => (
+              <span key={index}>{star}</span>
+            ))}
           </div>
 
-          <span className="ml-auto text-sm text-gray-400">
-            ({rating})
-          </span>
-
+          <span className="text-[13px] text-purple-400">({rating})</span>
         </div>
 
         {/* =================================================
             PRICE
-            ================================================= */}
+        ================================================= */}
 
-        <div className="mt-2 flex items-center gap-2">
-
-          <span className="text-[17px] font-bold text-[#171717]">
+        <div className="mt-3 flex items-center gap-2">
+          <span className="text-[17px] font-bold text-purple-950">
             ${Number(product.price).toFixed(2)}
           </span>
 
           {oldPrice !== null && (
-            <del className="text-[14px] text-gray-400">
+            <del className="text-[13px] text-purple-300">
               ${oldPrice.toFixed(2)}
             </del>
           )}
-
         </div>
 
         {/* =================================================
             STOCK
-            ================================================= */}
+        ================================================= */}
 
-        <div className="mt-6 flex items-center gap-1.5 text-[13px]">
-
+        <div className="mt-3 flex items-center gap-1.5 text-[13px]">
           <Check
-            size={17}
+            size={15}
             strokeWidth={2}
-            className="text-[#4dcc9a]"
+            className={stock > 0 ? "text-emerald-600" : "text-rose-500"}
           />
 
-          <span className="text-[#4dcc9a]">
-            {stock > 0
-              ? "In Stock"
-              : "Out of Stock"}
+          <span className={stock > 0 ? "text-emerald-600" : "text-rose-500"}>
+            {stock > 0 ? "In Stock" : "Out of Stock"}
           </span>
 
-          {stock > 0 && (
-            <span className="text-[#292929]">
-              {stock} Products
-            </span>
-          )}
-
+          {stock > 0 && <span className="text-purple-950">({stock})</span>}
         </div>
 
         {/* =================================================
-            ADD TO CART
-            ================================================= */}
+            ADD TO CART BUTTON (With Loader & Hover Animation)
+        ================================================= */}
 
-        <Link
-          href={`/cart?product=${product._id}`}
-          className="mt-7 flex h-[48px] w-full items-center justify-center rounded-[8px] border border-[#e0e8f0] bg-transparent text-[15px] font-semibold uppercase text-[#252525] transition duration-300 hover:border-black hover:bg-black hover:text-white"
+        <Button
+          onClick={handleAddToCart}
+          isDisabled={adding}
+          className="group/btn relative mt-5 flex h-10 w-full items-center justify-center overflow-hidden rounded-lg bg-purple-950 text-[13px] font-semibold uppercase tracking-wide text-white shadow-lg shadow-gray-500/20 transition-all duration-300 hover:bg-[#FD5B44] disabled:opacity-75"
         >
-          Add To Cart
-        </Link>
+          {adding ? (
+            /* 1. Loading State */
+            <div className="flex items-center gap-2">
+              <Loader2 size={16} className="animate-spin" />
+              <span>ADDING...</span>
+            </div>
+          ) : added ? (
+            /* 2. Success State */
+            <div className="flex items-center gap-2 text-emerald-300">
+              <Check size={16} />
+              <span>ADDED!</span>
+            </div>
+          ) : (
+            /* 3. Normal State with Hover Bottom-to-Top Effect */
+            <>
+              {/* Main text slides up on hover */}
+              <span className="transition-transform duration-300 ease-out group-hover/btn:-translate-y-10">
+                ADD TO CART
+              </span>
 
+              {/* Icon & text slides in from bottom on hover */}
+              <span className="absolute flex translate-y-10 items-center justify-center gap-1.5 transition-transform duration-300 ease-out group-hover/btn:translate-y-0">
+                <ShoppingCart size={16} />
+                <span>ADD TO CART</span>
+              </span>
+            </>
+          )}
+        </Button>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 /* =========================================================
    MAIN COMPONENT
-   ========================================================= */
+========================================================= */
 
 export default function TrendingProducts() {
-  const [products, setProducts] = useState<Product[]>(
-    []
-  );
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const [loading, setLoading] =
-    useState(true);
-
-  const [error, setError] =
-    useState("");
+  const swiperRef = useRef<SwiperType | null>(null);
 
   /* =======================================================
      FETCH DATA
-     ======================================================= */
+  ======================================================= */
 
   useEffect(() => {
-    const fetchTrendingProducts =
-      async () => {
-        try {
-          setLoading(true);
-          setError("");
+    const fetchTrendingProducts = async () => {
+      try {
+        setLoading(true);
+        setError("");
 
-          const apiUrl =
-            process.env.NEXT_PUBLIC_API_URL;
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-          if (!apiUrl) {
-            throw new Error(
-              "NEXT_PUBLIC_API_URL is not configured"
-            );
-          }
-
-          const response = await fetch(
-            `${apiUrl}/api/v1/products/home-sections`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type":
-                  "application/json",
-              },
-              cache: "no-store",
-            }
-          );
-
-          if (!response.ok) {
-            throw new Error(
-              `Failed to fetch products: ${response.status}`
-            );
-          }
-
-          const result: ApiResponse =
-            await response.json();
-
-          console.log(
-            "Trending Products API:",
-            result
-          );
-
-          if (!result.success) {
-            throw new Error(
-              result.message ||
-                "Failed to load products"
-            );
-          }
-
-          /* ===============================================
-             MOST SELLING = TRENDING PRODUCTS
-             =============================================== */
-
-          setProducts(
-            result.data?.mostSelling || []
-          );
-        } catch (error) {
-          console.error(
-            "Trending Products Error:",
-            error
-          );
-
-          setError(
-            "Failed to load trending products."
-          );
-
-          setProducts([]);
-        } finally {
-          setLoading(false);
+        if (!apiUrl) {
+          throw new Error("NEXT_PUBLIC_API_URL is not configured");
         }
-      };
+
+        const response = await fetch(`${apiUrl}/products/home-sections`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch products: ${response.status}`);
+        }
+
+        const result: ApiResponse = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.message || "Failed to load products");
+        }
+
+        setProducts(result.data?.mostSelling || []);
+      } catch (err) {
+        console.error("Trending Products Error:", err);
+        setError("Failed to load trending products.");
+        setProducts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchTrendingProducts();
   }, []);
 
-  /* =======================================================
-     RENDER
-     ======================================================= */
-
   return (
-    <section className="w-full overflow-hidden bg-[#f8fbff] py-10 md:py-12">
-
-      <div className="mx-auto w-full max-w-[1810px] px-5 md:px-8">
-
+    <section className="overflow-hidden bg-[#FAF5FF] px-4 py-16 dark:bg-[#0b1325]">
+      <div className="mx-auto max-w-[1860px] px-5 lg:px-8">
         {/* =================================================
             HEADER
-            ================================================= */}
+        ================================================= */}
 
-        <div className="flex items-center justify-between">
-
+        <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
           <div>
-
-            <h2 className="inline-block border-b-2 border-red-500 pb-3 text-[30px] font-bold leading-none text-[#292929] md:text-[38px]">
+            <h2 className="text-center text-[26px] font-bold leading-tight text-purple-950 sm:text-left sm:text-[30px]">
               Trending Products
             </h2>
-
           </div>
 
-          <Link
-            href="/shop"
-            className="hidden text-[18px] font-semibold text-black transition hover:text-red-500 md:block"
-          >
-            Explore All
-          </Link>
-
+          <div className="text-center sm:text-right">
+            <Link
+              href="/shop"
+              className="inline-block border-b-2 border-purple-700 pb-1 text-[15px] font-semibold text-[#FD5B44] transition hover:border-purple-950 hover:text-purple-950"
+            >
+              Explore All
+            </Link>
+          </div>
         </div>
 
-        {/* Bottom Line */}
+        {/* BOTTOM LINE */}
 
-        <div className="mt-[-2px] h-[2px] w-full bg-[#e1e8ef]" />
+        <div className="mt-5 h-px w-full bg-purple-200/80" />
 
         {/* =================================================
-            LOADING
-            ================================================= */}
+            LOADING STATE
+        ================================================= */}
 
         {loading && (
-          <div className="flex min-h-[400px] items-center justify-center">
-            <p className="text-gray-500">
-              Loading trending products...
-            </p>
+          <div className="flex min-h-[300px] items-center justify-center">
+            <p className="text-purple-600">Loading trending products...</p>
           </div>
         )}
 
         {/* =================================================
-            ERROR
-            ================================================= */}
+            ERROR STATE
+        ================================================= */}
 
         {!loading && error && (
-          <div className="flex min-h-[400px] flex-col items-center justify-center">
-
-            <p className="text-red-500">
-              {error}
-            </p>
-
+          <div className="flex min-h-[300px] flex-col items-center justify-center">
+            <p className="text-rose-500">{error}</p>
             <button
               type="button"
-              onClick={() =>
-                window.location.reload()
-              }
-              className="mt-4 rounded-md bg-black px-5 py-2 text-sm font-semibold text-white transition hover:bg-red-500"
+              onClick={() => window.location.reload()}
+              className="mt-4 rounded-lg bg-purple-950 px-5 py-2 text-sm font-medium text-white hover:bg-[#FD5B44]"
             >
               Try Again
             </button>
-
           </div>
         )}
 
         {/* =================================================
-            EMPTY
-            ================================================= */}
+            EMPTY STATE
+        ================================================= */}
 
-        {!loading &&
-          !error &&
-          products.length === 0 && (
-            <div className="flex min-h-[400px] items-center justify-center">
-
-              <p className="text-gray-500">
-                No trending products found.
-              </p>
-
-            </div>
-          )}
+        {!loading && !error && products.length === 0 && (
+          <div className="flex min-h-[300px] items-center justify-center">
+            <p className="text-purple-600">No trending products found.</p>
+          </div>
+        )}
 
         {/* =================================================
-            SLIDER
-            ================================================= */}
+            SLIDER CONTENT
+        ================================================= */}
 
-        {!loading &&
-          !error &&
-          products.length > 0 && (
-            <div className="mt-8">
+        {!loading && !error && products.length > 0 && (
+          <div className="relative mt-10">
+            {/* Previous Navigation Arrow */}
+            <button
+              type="button"
+              onClick={() => swiperRef.current?.slidePrev()}
+              aria-label="Previous products"
+              className="z-25 absolute -left-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-purple-200 bg-white text-purple-950 shadow-md transition hover:bg-[#FD5B44] hover:text-white"
+            >
+              <ChevronLeft size={20} />
+            </button>
 
-              <Swiper
-                spaceBetween={24}
-                slidesPerView={1}
-                breakpoints={{
-                  576: {
-                    slidesPerView: 2,
-                    spaceBetween: 20,
-                  },
+            {/* Next Navigation Arrow */}
+            <button
+              type="button"
+              aria-label="Next products"
+              onClick={() => swiperRef.current?.slideNext()}
+              className="z-25 absolute -right-5 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-purple-200 bg-white text-purple-950 shadow-md transition hover:bg-[#FD5B44] hover:text-white"
+            >
+              <ChevronRight size={20} />
+            </button>
 
-                  768: {
-                    slidesPerView: 3,
-                    spaceBetween: 20,
-                  },
-
-                  1024: {
-                    slidesPerView: 4,
-                    spaceBetween: 22,
-                  },
-
-                  1280: {
-                    slidesPerView: 5,
-                    spaceBetween: 24,
-                  },
-
-                  1536: {
-                    slidesPerView: 6,
-                    spaceBetween: 24,
-                  },
-                }}
-              >
-
-                {products.map(
-                  (product) => (
-                    <SwiperSlide
-                      key={product._id}
-                    >
-                      <ProductCard
-                        product={product}
-                      />
-                    </SwiperSlide>
-                  )
-                )}
-
-              </Swiper>
-
-            </div>
-          )}
-
-        {/* =================================================
-            MOBILE EXPLORE
-            ================================================= */}
-
-        <div className="mt-6 text-center md:hidden">
-
-          <Link
-            href="/shop"
-            className="text-[17px] font-semibold text-black hover:text-red-500"
-          >
-            Explore All
-          </Link>
-
-        </div>
-
+            <Swiper
+              onSwiper={(swiper) => {
+                swiperRef.current = swiper;
+              }}
+              spaceBetween={20}
+              slidesPerView={1}
+              loop={products.length > 5}
+              breakpoints={{
+                0: {
+                  slidesPerView: 1,
+                  spaceBetween: 16,
+                },
+                480: {
+                  slidesPerView: 1,
+                  spaceBetween: 16,
+                },
+                640: {
+                  slidesPerView: 2,
+                  spaceBetween: 18,
+                },
+                768: {
+                  slidesPerView: 2,
+                  spaceBetween: 20,
+                },
+                992: {
+                  slidesPerView: 3,
+                  spaceBetween: 20,
+                },
+                1200: {
+                  slidesPerView: 3,
+                  spaceBetween: 20,
+                },
+                1300: {
+                  slidesPerView: 4,
+                  spaceBetween: 22,
+                },
+                1500: {
+                  slidesPerView: 5,
+                  spaceBetween: 24,
+                },
+              }}
+              className="!py-3"
+            >
+              {products.map((product) => (
+                <SwiperSlide key={product._id}>
+                  <ProductCard product={product} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        )}
       </div>
-
     </section>
   );
 }

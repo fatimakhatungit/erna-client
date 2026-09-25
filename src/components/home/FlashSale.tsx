@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import {
   Check,
@@ -12,7 +13,12 @@ import {
   Eye,
   ChevronLeft,
   ChevronRight,
+  ShoppingBag,
+  Loader2,
 } from "lucide-react";
+import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
+import { useRouter } from "next/navigation";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
@@ -31,6 +37,7 @@ type Product = {
   discount?: number;
   rating?: number;
   stock?: number;
+  flashSalePrice?: number;
 };
 
 type HomeSectionsData = {
@@ -44,29 +51,23 @@ type HomeSectionsData = {
 type ApiResponse = {
   success: boolean;
   message?: string;
-  data?: HomeSectionsData;
+  data?: HomeSectionsData | Product[];
 };
 
 /* =========================================================
-   FALLBACK IMAGE
+   FALLBACK IMAGE & HELPERS
    ========================================================= */
 
-const FALLBACK_IMAGE = "/assets/product/product_3_2.png";
+const FALLBACK_IMAGE = "/placeholder.svg";
+const SALE_END_DATE = "2026-12-12T23:59:59";
 
-/* =========================================================
-   PRODUCT IMAGE HELPER
-   ========================================================= */
-
-function getProductImage(images?: string[]) {
+function getProductImage(images?: string[]): string {
   const image = images?.[0];
 
   if (!image) {
     return FALLBACK_IMAGE;
   }
 
-  /*
-   * API dummy image হলে local image ব্যবহার করবে
-   */
   if (
     image.includes("example.com") ||
     image.includes("placehold.co") ||
@@ -78,824 +79,510 @@ function getProductImage(images?: string[]) {
   return image;
 }
 
-/* =========================================================
-   COUNTDOWN
-   ========================================================= */
-
-const saleEnd = new Date("2026-12-12T23:59:59");
-
-function getCountdown() {
-  const difference = saleEnd.getTime() - Date.now();
+function getCountdown(targetDate: string) {
+  const difference = new Date(targetDate).getTime() - Date.now();
 
   if (difference <= 0) {
-    return {
-      days: 0,
-      hours: 0,
-      minutes: 0,
-      seconds: 0,
-    };
+    return { days: 0, hours: 0, minutes: 0, seconds: 0 };
   }
 
   return {
-    days: Math.floor(
-      difference / (1000 * 60 * 60 * 24)
-    ),
-
-    hours: Math.floor(
-      (difference / (1000 * 60 * 60)) % 24
-    ),
-
-    minutes: Math.floor(
-      (difference / (1000 * 60)) % 60
-    ),
-
-    seconds: Math.floor(
-      (difference / 1000) % 60
-    ),
+    days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+    hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+    minutes: Math.floor((difference / (1000 * 60)) % 60),
+    seconds: Math.floor((difference / 1000) % 60),
   };
 }
 
-/* =========================================================
-   OLD PRICE
-   ========================================================= */
-
-function getOldPrice(
-  price: number,
-  discount?: number
-) {
-  if (
-    !discount ||
-    discount <= 0 ||
-    discount >= 100
-  ) {
+function getOldPrice(price: number, discount?: number) {
+  if (!discount || discount <= 0 || discount >= 100) {
     return price;
   }
-
   return price / (1 - discount / 100);
 }
 
-/* =========================================================
-   RATING
-   ========================================================= */
-
 function getRatingStars(rating = 0) {
   const roundedRating = Math.round(rating);
-
-  return Array.from(
-    { length: 5 },
-    (_, index) =>
-      index < roundedRating ? "★" : "☆"
+  return Array.from({ length: 5 }, (_, index) =>
+    index < roundedRating ? "★" : "☆",
   );
 }
 
 /* =========================================================
-   PRODUCT CARD
+   PRODUCT CARD COMPONENT
    ========================================================= */
 
-function ProductCard({
-  product,
-}: {
-  product: Product;
-}) {
+function ProductCard({ product }: { product: Product }) {
+  const { addToCart } = useCart();
+  const router = useRouter();
+  const { isWishlisted, toggleWishlist, pendingId, isAuthenticated } =
+    useWishlist();
+  const [adding, setAdding] = useState(false);
+  const [added, setAdded] = useState(false);
+
   const rating = Number(product.rating ?? 0);
-
   const stock = Number(product.stock ?? 0);
+  const price = Number(product.flashSalePrice ?? product.price ?? 0);
 
-  const price = Number(product.price ?? 0);
+  const oldPrice =
+    product.flashSalePrice !== undefined && product.flashSalePrice !== null
+      ? Number(product.price ?? 0)
+      : getOldPrice(price, product.discount);
 
-  const oldPrice = getOldPrice(
-    price,
-    product.discount
-  );
+  const image = getProductImage(product.images);
+  const wishlisted = isWishlisted(product._id);
+  const wishlistPending = pendingId === product._id;
 
-  const image = getProductImage(
-    product.images
-  );
+  const handleToggleWishlist = () => {
+    if (!isAuthenticated) {
+      router.push("/login");
+      return;
+    }
+    void toggleWishlist(product._id);
+  };
+
+  const handleAddToCart = async () => {
+    if (adding || added) return;
+    setAdding(true);
+    await addToCart(product, 1);
+    setAdding(false);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
+  };
 
   return (
-    <div className="group relative h-full overflow-hidden rounded-lg border border-[#dce5ee] bg-transparent">
-
-      {/* =================================================
-          IMAGE
-          ================================================= */}
-
-      <div className="relative mx-2 mt-2 flex h-[243px] items-center justify-center overflow-hidden rounded-lg bg-[#e3ebf4]">
-
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="group relative flex h-full flex-col overflow-hidden rounded-xl bg-white shadow-md shadow-purple-900/5 border border-purple-100"
+    >
+      {/* IMAGE CONTAINER */}
+      <div className="relative mx-2 mt-2 flex h-[243px] items-center justify-center overflow-hidden rounded-lg bg-[#FAF5FF]">
         <Image
           src={image}
-          alt={
-            product.name ||
-            "Product image"
-          }
-          width={230}
-          height={230}
-          className="h-[190px] w-[230px] object-contain transition-transform duration-300 group-hover:scale-105"
+          alt={product.name || "Product image"}
+          width={600}
+          height={600}
+          className="h-[190px] w-[230px] object-cover transition-transform duration-300 group-hover:scale-105"
           unoptimized={
-            image.startsWith("http://") ||
-            image.startsWith("https://")
+            image.startsWith("http://") || image.startsWith("https://")
           }
         />
 
-        {/* =================================================
-            DISCOUNT
-            ================================================= */}
+        {/* DISCOUNT BADGE */}
+        {product.discount !== undefined && product.discount > 0 && (
+          <span className="absolute left-0 top-0 rounded-br-[16px] rounded-tl-[7px] bg-[#FD5B44] px-3 py-1 text-[14px] font-bold text-white shadow-sm">
+            -{product.discount}%
+          </span>
+        )}
 
-        {product.discount !== undefined &&
-          product.discount > 0 && (
-            <span className="absolute left-0 top-0 rounded-br-[16px] rounded-tl-[7px] bg-[#ed2939] px-3 py-1 text-[14px] font-bold text-white">
-              -{product.discount}%
-            </span>
-          )}
-
-        {/* =================================================
-            ACTIONS
-            ================================================= */}
-
+        {/* ACTION BUTTONS */}
         <div className="absolute right-3 top-3 flex translate-x-10 flex-col gap-2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100">
-
-          {/* Wishlist */}
-
-          <Link
-            href="/wishlist"
-            aria-label="Add to wishlist"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-700 shadow-md transition-colors hover:bg-[#ed2939] hover:text-white"
-          >
-            <Heart size={17} />
-          </Link>
-
-          {/* Compare */}
-
-          <Link
-            href="/compare"
-            aria-label="Compare product"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-700 shadow-md transition-colors hover:bg-[#ed2939] hover:text-white"
-          >
-            <ArrowLeftRight size={17} />
-          </Link>
-
-          {/* Quick View */}
-
-          <button
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
             type="button"
-            aria-label="Quick view"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-gray-700 shadow-md transition-colors hover:bg-[#ed2939] hover:text-white"
+            aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+            onClick={handleToggleWishlist}
+            disabled={wishlistPending}
+            className={`flex h-9 w-9 items-center justify-center rounded-full shadow-md transition-colors ${
+              wishlisted
+                ? "bg-[#FD5B44] text-white"
+                : "bg-white text-purple-900 hover:bg-[#FD5B44] hover:text-white"
+            }`}
           >
-            <Eye size={17} />
-          </button>
+            {wishlistPending ? (
+              <Loader2 size={17} className="animate-spin" />
+            ) : (
+              <Heart size={17} className={wishlisted ? "fill-current" : ""} />
+            )}
+          </motion.button>
 
+          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+            <Link
+              href="/compare"
+              aria-label="Compare product"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-purple-900 shadow-md transition-colors hover:bg-[#FD5B44] hover:text-white"
+            >
+              <ArrowLeftRight size={17} />
+            </Link>
+          </motion.div>
+
+          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
+            <Link
+              href={`/products/${product._id}`}
+              aria-label="Quick view"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-purple-900 shadow-md transition-colors hover:bg-[#FD5B44] hover:text-white"
+            >
+              <Eye size={17} />
+            </Link>
+          </motion.div>
         </div>
       </div>
 
-      {/* =================================================
-          CONTENT
-          ================================================= */}
-
-      <div className="flex min-h-[255px] flex-col px-6 pb-6 pt-5">
-
-        {/* Product Name */}
-
-        <h3 className="min-h-[52px] text-[16px] font-semibold leading-[1.45] text-[#111]">
-
+      {/* CARD CONTENT */}
+      <div className="flex flex-1 flex-col px-6 pb-6 pt-5">
+        <h3 className="min-h-[52px] text-[16px] font-semibold leading-[1.45] text-purple-950">
           <Link
             href={`/shop-details/${product._id}`}
-            className="transition-colors hover:text-[#ed2939]"
+            className="transition-colors hover:text-[#FD5B44]"
           >
             {product.name}
           </Link>
-
         </h3>
 
-        {/* =================================================
-            RATING
-            ================================================= */}
-
-        <div className="mt-2 flex items-center gap-5">
-
+        {/* RATING */}
+        <div className="mt-2 flex items-center gap-3">
           <div
-            className="flex gap-[1px] text-[19px] leading-none text-[#ff594d]"
+            className="flex gap-[1px] text-[19px] leading-none text-purple-600"
             aria-label={`Rated ${rating} out of 5`}
           >
-            {getRatingStars(rating).map(
-              (star, index) => (
-                <span key={index}>
-                  {star}
-                </span>
-              )
-            )}
+            {getRatingStars(rating).map((star, index) => (
+              <span key={index}>{star}</span>
+            ))}
           </div>
-
-          <span className="text-[13px] text-[#999]">
-            ({rating})
-          </span>
-
+          <span className="text-[13px] text-purple-400">({rating})</span>
         </div>
 
-        {/* =================================================
-            PRICE
-            ================================================= */}
-
+        {/* PRICE */}
         <div className="mt-3 flex items-center gap-2">
-
-          <span className="text-[17px] font-bold text-[#111]">
+          <span className="text-[17px] font-bold text-purple-950">
             ${price.toFixed(2)}
           </span>
-
-          {product.discount !== undefined &&
-            product.discount > 0 && (
-              <del className="text-[14px] text-[#999]">
-                ${oldPrice.toFixed(2)}
-              </del>
-            )}
-
+          {product.discount !== undefined && product.discount > 0 && (
+            <del className="text-[14px] text-purple-300">
+              ${oldPrice.toFixed(2)}
+            </del>
+          )}
         </div>
 
-        {/* =================================================
-            STOCK
-            ================================================= */}
-
-        <div className="mt-5 flex items-center gap-1.5 text-[13px]">
-
+        {/* STOCK STATUS */}
+        <div className="mt-4 flex items-center gap-1.5 text-[13px]">
           <Check
             size={15}
             strokeWidth={1.8}
-            className={
-              stock > 0
-                ? "text-[#18b875]"
-                : "text-red-500"
-            }
+            className={stock > 0 ? "text-purple-600" : "text-rose-500"}
           />
-
           <span
             className={
-              stock > 0
-                ? "text-[#18b875]"
-                : "text-red-500"
+              stock > 0 ? "text-purple-600 font-medium" : "text-rose-500"
             }
           >
-            {stock > 0
-              ? "In Stock"
-              : "Out of Stock"}
+            {stock > 0 ? "In Stock" : "Out of Stock"}
           </span>
-
           {stock > 0 && (
-            <span className="text-[#111]">
-              {stock} Products
-            </span>
+            <span className="text-purple-950">{stock} Products</span>
           )}
-
         </div>
 
-        {/* =================================================
-            ADD TO CART
-            ================================================= */}
-
-        <Link
-          href={`/cart?product=${product._id}`}
-          className="mt-auto flex h-[48px] w-full items-center justify-center rounded-lg border border-[#dce5ee] bg-transparent text-[15px] font-semibold uppercase text-[#111] transition-all duration-300 hover:border-[#ed2939] hover:bg-[#ed2939] hover:text-white"
+        {/* ADD TO CART BUTTON */}
+        <motion.button
+          whileTap={stock > 0 ? { scale: 0.98 } : {}}
+          type="button"
+          disabled={stock <= 0 || adding}
+          onClick={handleAddToCart}
+          className={`mt-5 flex h-[48px] w-full items-center justify-center rounded-lg border bg-transparent text-[15px] font-semibold uppercase transition-all duration-300 ${
+            stock <= 0
+              ? "cursor-not-allowed border-purple-200 text-purple-300"
+              : added
+                ? "border-purple-700 bg-[#FD5B44] text-white"
+                : "border-purple-200 text-purple-900 hover:border-[#FD5B44] hover:bg-[#FD5B44] hover:text-white"
+          }`}
         >
-          Add To Cart
-        </Link>
-
+          {adding ? (
+            <Loader2 size={18} className="animate-spin" />
+          ) : added ? (
+            <motion.div
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              className="flex items-center"
+            >
+              <Check size={18} className="mr-1.5" />
+              Added
+            </motion.div>
+          ) : stock <= 0 ? (
+            "Out of Stock"
+          ) : (
+            <>
+              <ShoppingBag size={18} className="mr-1.5" />
+              Add To Cart
+            </>
+          )}
+        </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 /* =========================================================
-   MAIN COMPONENT
+   MAIN FLASH SALE COMPONENT
    ========================================================= */
 
 export default function FlashSale() {
+  const swiperRef = useRef<SwiperType | null>(null);
 
-  /* =======================================================
-     SWIPER
-     ======================================================= */
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [time, setTime] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
+  const [mounted, setMounted] = useState(false);
 
-  const swiperRef =
-    useRef<SwiperType | null>(null);
-
-  /* =======================================================
-     STATES
-     ======================================================= */
-
-  const [products, setProducts] =
-    useState<Product[]>([]);
-
-  const [loading, setLoading] =
-    useState(true);
-
-  const [error, setError] =
-    useState("");
-
-  const [time, setTime] =
-    useState({
-      days: 0,
-      hours: 0,
-      minutes: 0,
-      seconds: 0,
-    });
-
-  const [mounted, setMounted] =
-    useState(false);
-
-  /* =======================================================
-     FETCH FLASH SALE PRODUCTS
-     ======================================================= */
-
+  /* FETCH FLASH SALE PRODUCTS */
   useEffect(() => {
-    const fetchFlashSaleProducts =
-      async () => {
-        try {
-          setLoading(true);
-          setError("");
+    const fetchFlashSaleProducts = async () => {
+      try {
+        setLoading(true);
+        setError("");
 
-          const apiUrl =
-            process.env.NEXT_PUBLIC_API_URL;
-
-          if (!apiUrl) {
-            throw new Error(
-              "NEXT_PUBLIC_API_URL is not configured"
-            );
-          }
-
-          const response =
-            await fetch(
-              `${apiUrl}/api/v1/products/home-sections`,
-              {
-                method: "GET",
-                headers: {
-                  Accept:
-                    "application/json",
-                },
-                cache: "no-store",
-              }
-            );
-
-          if (!response.ok) {
-            throw new Error(
-              `Failed to fetch products: ${response.status}`
-            );
-          }
-
-          const result: ApiResponse =
-            await response.json();
-
-          if (!result.success) {
-            throw new Error(
-              result.message ||
-                "Failed to load flash sale products"
-            );
-          }
-
-          const flashSaleProducts =
-            result.data?.flashSale ?? [];
-
-          setProducts(
-            flashSaleProducts
-          );
-
-        } catch (error) {
-          console.error(
-            "Flash Sale Error:",
-            error
-          );
-
-          setError(
-            "Failed to load flash sale products."
-          );
-
-          setProducts([]);
-
-        } finally {
-          setLoading(false);
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+        if (!apiUrl) {
+          throw new Error("NEXT_PUBLIC_API_URL is not configured");
         }
-      };
+
+        const response = await fetch(`${apiUrl}/products/flash-sale`, {
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch products: ${response.status}`);
+        }
+
+        const result: ApiResponse = await response.json();
+        if (!result.success) {
+          throw new Error(
+            result.message || "Failed to load flash sale products",
+          );
+        }
+
+        const data = result.data;
+        let flashSaleProducts: Product[] = [];
+
+        if (Array.isArray(data)) {
+          flashSaleProducts = data;
+        } else if (data && typeof data === "object") {
+          flashSaleProducts = data.flashSale ?? [];
+        }
+
+        setProducts(flashSaleProducts);
+      } catch (err: unknown) {
+        console.warn("Flash Sale API call issue:", err);
+        setError("Could not load products.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchFlashSaleProducts();
   }, []);
 
-  /* =======================================================
-     COUNTDOWN
-     ======================================================= */
-
+  /* COUNTDOWN TIMER */
   useEffect(() => {
     setMounted(true);
+    setTime(getCountdown(SALE_END_DATE));
 
-    setTime(getCountdown());
+    const interval = window.setInterval(() => {
+      setTime(getCountdown(SALE_END_DATE));
+    }, 1000);
 
-    const interval =
-      window.setInterval(() => {
-        setTime(getCountdown());
-      }, 1000);
-
-    return () => {
-      window.clearInterval(interval);
-    };
+    return () => window.clearInterval(interval);
   }, []);
 
-  /* =======================================================
-     RETURN
-     ======================================================= */
-
   return (
-    <section className="overflow-hidden bg-[#f7faff] py-[60px] md:py-[70px]">
-
+    <section className="overflow-hidden bg-[#FAF5FF] dark:bg-[#0b1325] rounded-2xl dark:text-white py-[60px] md:py-[70px]">
       <div className="mx-auto w-full max-w-[1860px] px-5 lg:px-8">
-
-        {/* =================================================
-            HEADER
-            ================================================= */}
-
-        <div className="mb-8 flex flex-col justify-between gap-7 xl:flex-row xl:items-center">
-
-          {/* =================================================
-              TITLE
-              ================================================= */}
-
+        {/* HEADER */}
+        <motion.div
+          initial={{ opacity: 0, y: -15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8 flex flex-col justify-between gap-7 xl:flex-row xl:items-center"
+        >
           <div>
-
-            <h2 className="text-[30px] font-bold leading-none text-[#111] sm:text-[34px] md:text-[38px]">
+            <h2 className="text-[30px] font-bold leading-none text-purple-950 dark:text-white sm:text-[34px] md:text-[38px]">
               Flash Sale Today
             </h2>
-
-            {/* Underline */}
-
-            <div className="relative mt-5 h-[2px] w-[250px] bg-[#dce5ee] sm:w-[308px]">
-
-              <span className="absolute left-0 top-0 h-[2px] w-[150px] bg-[#ff594d] sm:w-[172px]" />
-
+            <div className="relative mt-5 h-[2px] w-[250px] bg-purple-200 sm:w-[308px]">
+              <motion.span
+                initial={{ width: 0 }}
+                animate={{ width: "150px" }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="absolute left-0 top-0 h-[2px] bg-[#FD5B44] sm:w-[172px]"
+              />
             </div>
-
           </div>
 
-          {/* =================================================
-              RIGHT SIDE
-              ================================================= */}
-
+          {/* TIMER & LINK */}
           <div className="flex flex-wrap items-center gap-3">
-
-            {/* Fire + Text */}
-
             <div className="flex items-center gap-2 sm:gap-3">
-
-              <Flame
-                size={27}
-                strokeWidth={2.5}
-                className="fill-[#ed2939] text-[#ed2939] sm:h-[30px] sm:w-[30px]"
-              />
-
-              <span className="text-[15px] font-semibold text-[#ed2939] sm:text-[18px]">
+              <motion.div
+                animate={{ scale: [1, 1.15, 1] }}
+                transition={{ repeat: Infinity, duration: 1.5 }}
+              >
+                <Flame
+                  size={27}
+                  strokeWidth={2.5}
+                  className="fill-[#FD5B44] text-[#FD5B44] sm:h-[30px] sm:w-[30px]"
+                />
+              </motion.div>
+              <span className="text-[15px] font-semibold text-[#FD5B44] sm:text-[18px]">
                 Hurry up! Sale end in:
               </span>
-
             </div>
 
-            {/* =================================================
-                DAYS
-                ================================================= */}
-
-            <div className="flex h-[52px] w-[57px] flex-col items-center justify-center rounded-lg bg-[#ed2939] text-white">
-
-              <span className="text-[17px] font-bold leading-none">
-                {mounted
-                  ? String(time.days).padStart(
-                      2,
-                      "0"
-                    )
-                  : "00"}
-              </span>
-
-              <span className="mt-1 text-[12px]">
-                Days
-              </span>
-
-            </div>
-
-            {/* =================================================
-                HOURS
-                ================================================= */}
-
-            <div className="flex h-[52px] w-[57px] flex-col items-center justify-center rounded-lg bg-[#ed2939] text-white">
-
-              <span className="text-[17px] font-bold leading-none">
-                {mounted
-                  ? String(time.hours).padStart(
-                      2,
-                      "0"
-                    )
-                  : "00"}
-              </span>
-
-              <span className="mt-1 text-[12px]">
-                Hours
-              </span>
-
-            </div>
-
-            {/* =================================================
-                MINUTES
-                ================================================= */}
-
-            <div className="flex h-[52px] w-[57px] flex-col items-center justify-center rounded-lg bg-[#ed2939] text-white">
-
-              <span className="text-[17px] font-bold leading-none">
-                {mounted
-                  ? String(
-                      time.minutes
-                    ).padStart(2, "0")
-                  : "00"}
-              </span>
-
-              <span className="mt-1 text-[12px]">
-                Mins
-              </span>
-
-            </div>
-
-            {/* =================================================
-                SECONDS
-                ================================================= */}
-
-            <div className="flex h-[52px] w-[57px] flex-col items-center justify-center rounded-lg bg-[#ed2939] text-white">
-
-              <span className="text-[17px] font-bold leading-none">
-                {mounted
-                  ? String(
-                      time.seconds
-                    ).padStart(2, "0")
-                  : "00"}
-              </span>
-
-              <span className="mt-1 text-[12px]">
-                Secs
-              </span>
-
-            </div>
-
-            {/* =================================================
-                EXPLORE
-                ================================================= */}
+            {/* COUNTDOWN BOXES WITH MOTION */}
+            {[
+              { label: "Days", val: time.days },
+              { label: "Hours", val: time.hours },
+              { label: "Mins", val: time.minutes },
+              { label: "Secs", val: time.seconds },
+            ].map((unit) => (
+              <div
+                key={unit.label}
+                className="flex h-[52px] w-[57px] flex-col items-center justify-center rounded-lg bg-[#FD5B44] text-white shadow-md shadow-purple-300"
+              >
+                <AnimatePresence mode="popLayout">
+                  <motion.span
+                    key={unit.val}
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 5 }}
+                    transition={{ duration: 0.2 }}
+                    className="text-[17px] font-bold leading-none"
+                  >
+                    {mounted ? String(unit.val).padStart(2, "0") : "00"}
+                  </motion.span>
+                </AnimatePresence>
+                <span className="mt-1 text-[12px]">{unit.label}</span>
+              </div>
+            ))}
 
             <Link
               href="/shop"
-              className="ml-1 text-[16px] font-semibold text-[#111] transition-colors hover:text-[#ed2939] sm:text-[18px]"
+              className="ml-1 text-[16px] font-semibold text-purple-950 transition-colors hover:text-[#FD5B44] sm:text-[18px]"
             >
               Explore All
             </Link>
-
           </div>
-        </div>
+        </motion.div>
 
-        {/* =================================================
-            LOADING
-            ================================================= */}
-
+        {/* LOADING STATE */}
         {loading && (
           <div className="flex min-h-[400px] items-center justify-center">
-
-            <p className="text-lg text-gray-500">
-              Loading flash sale products...
-            </p>
-
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+            >
+              <Loader2 size={32} className="text-[#FD5B44]" />
+            </motion.div>
           </div>
         )}
 
-        {/* =================================================
-            ERROR
-            ================================================= */}
-
+        {/* ERROR STATE */}
         {!loading && error && (
-          <div className="flex min-h-[400px] items-center justify-center">
-
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex min-h-[400px] items-center justify-center"
+          >
             <div className="text-center">
-
-              <p className="text-lg text-red-500">
-                {error}
-              </p>
-
+              <p className="text-lg text-rose-500">{error}</p>
               <button
                 type="button"
-                onClick={() =>
-                  window.location.reload()
-                }
-                className="mt-4 rounded-md bg-black px-5 py-2 text-sm font-medium text-white transition hover:bg-[#ed2939]"
+                onClick={() => window.location.reload()}
+                className="mt-4 rounded-md bg-purple-950 px-5 py-2 text-sm font-medium text-white transition hover:bg-[#FD5B44]"
               >
                 Try Again
               </button>
-
             </div>
+          </motion.div>
+        )}
 
+        {/* EMPTY STATE */}
+        {!loading && !error && products.length === 0 && (
+          <div className="flex min-h-[400px] items-center justify-center">
+            <p className="text-lg text-purple-400">
+              No flash sale products found.
+            </p>
           </div>
         )}
 
-        {/* =================================================
-            EMPTY
-            ================================================= */}
+        {/* SLIDER CONTENT */}
+        {!loading && !error && products.length > 0 && (
+          <div className="relative mt-8">
+            <Swiper
+              onSwiper={(swiper) => {
+                swiperRef.current = swiper;
+              }}
+              slidesPerView={1}
+              spaceBetween={16}
+              loop={products.length >= 7}
+              speed={600}
+              breakpoints={{
+                0: { slidesPerView: 1, spaceBetween: 16 },
+                480: { slidesPerView: 1, spaceBetween: 18 },
+                640: { slidesPerView: 2, spaceBetween: 18 },
+                768: { slidesPerView: 3, spaceBetween: 20 },
+                1024: { slidesPerView: 4, spaceBetween: 22 },
+                1280: { slidesPerView: 5, spaceBetween: 22 },
+                1536: { slidesPerView: 6, spaceBetween: 24 },
+              }}
+            >
+              {products.map((product) => (
+                <SwiperSlide key={product._id} className="h-auto">
+                  <ProductCard product={product} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
 
-        {!loading &&
-          !error &&
-          products.length === 0 && (
-            <div className="flex min-h-[400px] items-center justify-center">
+            {/* PREVIOUS ARROW */}
+            <motion.button
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              type="button"
+              aria-label="Previous products"
+              onClick={() => swiperRef.current?.slidePrev()}
+              className="group absolute left-[-18px] top-1/2 z-30 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-purple-200 bg-white shadow-md transition-all duration-300 hover:bg-purple-950 md:flex lg:left-[-22px]"
+            >
+              <ChevronLeft
+                size={26}
+                strokeWidth={2}
+                className="text-purple-950 transition-colors group-hover:text-white"
+              />
+            </motion.button>
 
-              <p className="text-lg text-gray-500">
-                No flash sale products found.
-              </p>
+            {/* NEXT ARROW */}
+            <motion.button
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
+              type="button"
+              aria-label="Next products"
+              onClick={() => swiperRef.current?.slideNext()}
+              className="group absolute right-[-18px] top-1/2 z-30 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-purple-200 bg-white shadow-md transition-all duration-300 hover:bg-purple-950 md:flex lg:right-[-22px]"
+            >
+              <ChevronRight
+                size={26}
+                strokeWidth={2}
+                className="text-purple-950 transition-colors group-hover:text-white"
+              />
+            </motion.button>
+          </div>
+        )}
 
-            </div>
-          )}
-
-        {/* =================================================
-            PRODUCT SLIDER
-            ================================================= */}
-
-        {!loading &&
-          !error &&
-          products.length > 0 && (
-            <div className="relative mt-8">
-
-              <Swiper
-                onSwiper={(swiper) => {
-                  swiperRef.current = swiper;
-                }}
-                slidesPerView={1}
-                spaceBetween={16}
-                loop={products.length > 6}
-                speed={600}
-                breakpoints={{
-                  /* Mobile */
-
-                  0: {
-                    slidesPerView: 1,
-                    spaceBetween: 16,
-                  },
-
-                  /* Large Mobile */
-
-                  480: {
-                    slidesPerView: 1,
-                    spaceBetween: 18,
-                  },
-
-                  /* Small Tablet */
-
-                  640: {
-                    slidesPerView: 2,
-                    spaceBetween: 18,
-                  },
-
-                  /* Tablet */
-
-                  768: {
-                    slidesPerView: 3,
-                    spaceBetween: 20,
-                  },
-
-                  /* Laptop */
-
-                  1024: {
-                    slidesPerView: 4,
-                    spaceBetween: 22,
-                  },
-
-                  /* Desktop */
-
-                  1280: {
-                    slidesPerView: 5,
-                    spaceBetween: 22,
-                  },
-
-                  /* Large Desktop */
-
-                  1536: {
-                    slidesPerView: 6,
-                    spaceBetween: 24,
-                  },
-                }}
-              >
-
-                {/* =================================================
-                    PRODUCTS
-                    ================================================= */}
-
-                {products.map(
-                  (product) => (
-                    <SwiperSlide
-                      key={product._id}
-                      className="h-auto"
-                    >
-                      <ProductCard
-                        product={product}
-                      />
-                    </SwiperSlide>
-                  )
-                )}
-
-              </Swiper>
-
-              {/* =================================================
-                  PREVIOUS ARROW
-                  ================================================= */}
-
-              <button
-                type="button"
-                aria-label="Previous products"
-                onClick={() =>
-                  swiperRef.current?.slidePrev()
-                }
-                className="
-                  group
-                  absolute
-                  left-[-18px]
-                  top-1/2
-                  z-30
-                  hidden
-                  h-11
-                  w-11
-                  -translate-y-1/2
-                  items-center
-                  justify-center
-                  rounded-full
-                  border
-                  border-[#dce5ee]
-                  bg-white
-                  shadow-md
-                  transition-all
-                  duration-300
-                  hover:bg-black
-                  md:flex
-                  lg:left-[-22px]
-                "
-              >
-
-                <ChevronLeft
-                  size={26}
-                  strokeWidth={2}
-                  className="text-black transition-colors group-hover:text-white"
-                />
-
-              </button>
-
-              {/* =================================================
-                  NEXT ARROW
-                  ================================================= */}
-
-              <button
-                type="button"
-                aria-label="Next products"
-                onClick={() =>
-                  swiperRef.current?.slideNext()
-                }
-                className="
-                  group
-                  absolute
-                  right-[-18px]
-                  top-1/2
-                  z-30
-                  hidden
-                  h-11
-                  w-11
-                  -translate-y-1/2
-                  items-center
-                  justify-center
-                  rounded-full
-                  border
-                  border-[#dce5ee]
-                  bg-white
-                  shadow-md
-                  transition-all
-                  duration-300
-                  hover:bg-black
-                  md:flex
-                  lg:right-[-22px]
-                "
-              >
-
-                <ChevronRight
-                  size={26}
-                  strokeWidth={2}
-                  className="text-black transition-colors group-hover:text-white"
-                />
-
-              </button>
-
-            </div>
-          )}
-
-        {/* =================================================
-            MOBILE EXPLORE
-            ================================================= */}
-
+        {/* MOBILE EXPLORE LINK */}
         <div className="mt-7 text-center md:hidden">
-
           <Link
             href="/shop"
-            className="text-[17px] font-semibold text-black transition-colors hover:text-[#ed2939]"
+            className="text-[17px] font-semibold text-purple-950 transition-colors hover:text-[#FD5B44]"
           >
             Explore All
           </Link>
-
         </div>
-
       </div>
     </section>
   );

@@ -2,11 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Autoplay,  Pagination } from "swiper/modules";
+import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 import "swiper/css";
-
 
 import "swiper/css/pagination";
 
@@ -22,38 +21,38 @@ const heroSlides: HeroSlide[] = [
     subtitle: "Best Gadget with Best Price",
     title: "Unbeatable Gadget Combos for Tech Lover",
     price: "$389.99",
-    image: "/assets/hero/hero_1_1.jpg",
+    image: "/images/hero/hero_1_1.jpg",
   },
   {
     subtitle: "Favorable Smart Watches",
     title: "Samsung Galaxy Watch6 Aluminum Smart Watch",
     price: "$289.99",
-    image: "/assets/hero/hero_1_2.jpg",
+    image: "/images/hero/hero_1_2.jpg",
   },
   {
     subtitle: "Beats Fit Pro",
     title: "Beat True Wireless Noise Cancelling Earbuds",
     price: "$189.99",
-    image: "/assets/hero/hero_1_3.jpg",
+    image: "/images/hero/hero_1_3.jpg",
   },
 ];
 
 export default function Hero() {
   return (
-    <section id="hero" className="relative overflow-hidden bg-gray-100">
-       <Image
-        src="/assets/bg/hero_bg_2.png"
+    <section id="hero" className="relative overflow-hidden bg-gray-100 mt-10">
+      <Image
+        src="/assets/hero_bg_1_1.jpg"
         alt="Hero Background"
         fill
         priority
         className="object-cover"
       />
       <Swiper
-        modules={[Autoplay,  Pagination]}
+        modules={[Autoplay, Pagination]}
         effect="fade"
         autoplay={{
           delay: 4000,
-          disableOnInteraction: false, 
+          disableOnInteraction: false,
         }}
         pagination={{
           clickable: true,
@@ -65,12 +64,9 @@ export default function Hero() {
           <SwiperSlide key={index}>
             <div className="min-h-[550px] md:min-h-[600px] lg:min-h-[650px]">
               <div className="mx-auto flex min-h-[550px] max-w-7xl items-center px-5 py-12 sm:px-8 md:min-h-[600px] lg:min-h-[650px] lg:px-10">
-                
                 <div className="grid w-full grid-cols-1 items-center gap-10 lg:grid-cols-2">
-
                   {/* Content */}
                   <div className="text-center lg:text-left">
-
                     <span className="mb-4 inline-block text-sm font-semibold uppercase tracking-wider text-white sm:text-base">
                       {slide.subtitle}
                     </span>
@@ -89,7 +85,7 @@ export default function Hero() {
                     <div className="mt-7">
                       <Link
                         href="/shop"
-                        className="inline-flex rounded-lg bg-[#ff594d] px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-[#ff594d] sm:px-8 sm:py-4 sm:text-base"
+                        className="inline-flex rounded-lg bg-[#FD5B44] px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-[#FD5B448f] sm:px-8 sm:py-4 sm:text-base"
                       >
                         START BUYING
                       </Link>
@@ -108,7 +104,6 @@ export default function Hero() {
                       />
                     </div>
                   </div>
-
                 </div>
               </div>
             </div>

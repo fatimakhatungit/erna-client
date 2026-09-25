@@ -3,6 +3,11 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/footer/Footer";
+import { ToastProvider } from "@/context/ToastContext";
+import { CartProvider } from "@/context/CartContext";
+import { WishlistProvider } from "@/context/WishlistContext";
+import ThemeProvider from "./theme-provider";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,23 +20,37 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Erna",
-  description: "Erna — Multi-Vendor E-Commerce.",
+  title: "erna — Multi-Vendor E-Commerce",
+  description: "erna — Modern Multi-Vendor E-Commerce Platform.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <Navbar></Navbar>
-        {children}
-          
-    
-        <Footer></Footer>
-        </body>
+      <body className="min-h-full flex flex-col bg-background text-foreground dark:bg-[#0b1325]">
+        <SmoothScroll>
+          <ThemeProvider>
+            <ToastProvider>
+              <CartProvider>
+                <WishlistProvider>
+                  {/* <Navbar /> */}
+                  <main className="flex-grow">{children}</main>
+
+                  {/* <Footer /> */}
+                </WishlistProvider>
+              </CartProvider>
+            </ToastProvider>
+          </ThemeProvider>
+        </SmoothScroll>
+      </body>
     </html>
   );
 }

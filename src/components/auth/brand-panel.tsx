@@ -62,7 +62,7 @@ export default function BrandPanel({
               stroke="currentColor"
               strokeWidth="2"
               strokeLinecap="round"
-              className="venraz-growth-path"
+              className="erna-growth-path"
             />
             {[
               { cx: 110, cy: 62, delay: "0.6s" },
@@ -77,7 +77,7 @@ export default function BrandPanel({
                 fill="#FBFAF7"
                 stroke="#C08A3E"
                 strokeWidth="2"
-                className="venraz-growth-marker"
+                className="erna-growth-marker"
                 style={{ animationDelay: m.delay }}
               />
             ))}
@@ -86,31 +86,31 @@ export default function BrandPanel({
       </div>
 
       <p className="relative text-xs text-[#6E8880]">
-        © {new Date().getFullYear()} VenRaz, Inc.
+        © {new Date().getFullYear()} erna, Inc.
       </p>
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap');
 
-        .venraz-growth-path {
+        .erna-growth-path {
           stroke-dasharray: 480;
           stroke-dashoffset: 480;
-          animation: venraz-draw 2.2s ease-out forwards;
+          animation: erna-draw 2.2s ease-out forwards;
         }
-        .venraz-growth-marker {
+        .erna-growth-marker {
           opacity: 0;
-          animation: venraz-pop 0.5s ease-out forwards;
+          animation: erna-pop 0.5s ease-out forwards;
         }
-        @keyframes venraz-draw {
+        @keyframes erna-draw {
           to { stroke-dashoffset: 0; }
         }
-        @keyframes venraz-pop {
+        @keyframes erna-pop {
           from { opacity: 0; transform: scale(0.4); }
           to { opacity: 1; transform: scale(1); }
         }
         @media (prefers-reduced-motion: reduce) {
-          .venraz-growth-path { stroke-dashoffset: 0; animation: none; }
-          .venraz-growth-marker { opacity: 1; animation: none; }
+          .erna-growth-path { stroke-dashoffset: 0; animation: none; }
+          .erna-growth-marker { opacity: 1; animation: none; }
         }
       `}</style>
     </div>
