@@ -39,7 +39,7 @@ const heroSlides: HeroSlide[] = [
 
 export default function Hero() {
   return (
-    <section id="hero" className="relative overflow-hidden bg-gray-100 mt-10">
+    <section id="hero" className="relative overflow-hidden mx-auto max-w-[1800px] rounded-[22px] bg-gray-100 mt-10">
       <Image
         src="/assets/hero_bg_1_1.jpg"
         alt="Hero Background"
@@ -85,7 +85,7 @@ export default function Hero() {
                     <div className="mt-7">
                       <Link
                         href="/shop"
-                        className="inline-flex rounded-lg bg-[#FD5B44] px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-[#FD5B448f] sm:px-8 sm:py-4 sm:text-base"
+                        className="inline-flex rounded-lg bg-[#FD5B44] px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-[#fff] hover:text-black sm:px-8 sm:py-4 sm:text-base"
                       >
                         START BUYING
                       </Link>

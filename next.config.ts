@@ -5,7 +5,9 @@ const nextConfig: NextConfig = {
     cpus: 4,
     memoryBasedWorkersCount: true,
   },
+
   enablePrerenderSourceMaps: false,
+
   images: {
     remotePatterns: [
       {
@@ -20,7 +22,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
-
+      {
+        protocol: "https",
+        hostname: "www.zebronics.com",
+      },
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
@@ -35,14 +40,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "res.cloudinary.com",
-      },
-      {
-        protocol: "https",
         hostname: "i.ibb.co.com",
       },
     ],
   },
+
   async redirects() {
     return [
       {
@@ -80,3 +82,4 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+

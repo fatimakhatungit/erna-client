@@ -86,13 +86,17 @@ export default function Category() {
         });
 
         if (!response.ok) {
-          throw new Error(`Failed to fetch categories: ${response.status}`);
+          throw new Error(
+            `Failed to fetch categories: ${response.status}`,
+          );
         }
 
         const result: CategoryApiResponse = await response.json();
 
         if (!result.success) {
-          throw new Error(result.message || "Failed to load categories");
+          throw new Error(
+            result.message || "Failed to load categories",
+          );
         }
 
         /* =================================================
@@ -125,18 +129,37 @@ export default function Category() {
 
         setCategories(categoryData);
       } catch (error) {
-        console.warn("Category API offline, using fallback categories:", error);
+        console.warn(
+          "Category API offline, using fallback categories:",
+          error,
+        );
 
         setCategories([
-          { _id: "cat-1", name: "Smart Watches", image: "/placeholder.svg" },
+          {
+            _id: "cat-1",
+            name: "Smart Watches",
+            image: "/placeholder.svg",
+          },
           {
             _id: "cat-2",
             name: "Headphones & Audio",
             image: "/placeholder.svg",
           },
-          { _id: "cat-3", name: "Action Cameras", image: "/placeholder.svg" },
-          { _id: "cat-4", name: "Gaming Keyboards", image: "/placeholder.svg" },
-          { _id: "cat-5", name: "Wireless Mice", image: "/placeholder.svg" },
+          {
+            _id: "cat-3",
+            name: "Action Cameras",
+            image: "/placeholder.svg",
+          },
+          {
+            _id: "cat-4",
+            name: "Gaming Keyboards",
+            image: "/placeholder.svg",
+          },
+          {
+            _id: "cat-5",
+            name: "Wireless Mice",
+            image: "/placeholder.svg",
+          },
           {
             _id: "cat-6",
             name: "Bluetooth Speakers",
@@ -159,26 +182,29 @@ export default function Category() {
 
   if (loading) {
     return (
-      <section className="w-full bg-purple-50/40 py-12 dark:bg-slate-950">
+      <section className="w-full">
         <div className="mx-auto max-w-[1800px] px-5">
-          <div className="flex items-center justify-between border-b border-purple-100 pb-4 dark:border-purple-900/40">
+          {/* HEADER */}
+          <div className="flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-800">
             <div className="relative">
-              <h2 className="text-[32px] font-bold leading-none text-purple-950 dark:text-purple-100">
+              <h2 className="text-[32px] font-bold leading-none text-black dark:text-white">
                 Shop by Categories
               </h2>
-              <span className="absolute bottom-[-17px] left-0 h-[2.5px] w-[174px] bg-purple-600" />
+
+              <span className="absolute bottom-[-17px] left-0 h-[2.5px] w-[174px] bg-[#FD5B44]" />
             </div>
 
             <Link
               href="/shop"
-              className="text-[18px] font-medium text-purple-900 transition hover:text-purple-600 dark:text-purple-200 dark:hover:text-purple-400"
+              className="text-[18px] font-medium text-black transition-colors hover:text-[#FD5B44] dark:text-white dark:hover:text-[#FD5B44]"
             >
               Explore All
             </Link>
           </div>
 
+          {/* LOADING */}
           <div className="flex min-h-[300px] items-center justify-center">
-            <p className="text-purple-900/60 dark:text-purple-300/60">
+            <p className="text-black/60 dark:text-white/60">
               Loading categories...
             </p>
           </div>
@@ -192,23 +218,25 @@ export default function Category() {
      ======================================================= */
 
   return (
-    <section className="w-full bg-purple-50/40 py-12 dark:bg-slate-950">
+    <section className="w-full">
       <div className="mx-auto max-w-[1800px] px-5">
         {/* =================================================
             HEADER
             ================================================= */}
 
-        <div className="flex items-center justify-between border-b border-purple-100 pb-4 dark:border-purple-900/40">
+        <div className="flex items-center justify-between border-b border-gray-200 pb-4 dark:border-gray-800">
           <div className="relative">
-            <h2 className="text-[32px] font-bold leading-none text-purple-950 dark:text-purple-100">
+            <h2 className="text-[32px] font-bold leading-none text-black dark:text-white">
               Shop by Categories
             </h2>
-            <span className="absolute bottom-[-17px] left-0 h-[2.5px] w-[174px] bg-purple-600" />
+
+            {/* ORANGE THEME LINE */}
+            <span className="absolute bottom-[-17px] left-0 h-[2.5px] w-[174px] bg-[#FD5B44]" />
           </div>
 
           <Link
             href="/shop"
-            className="text-[18px] font-medium text-purple-900 transition hover:text-purple-600 dark:text-purple-200 dark:hover:text-purple-400"
+            className="text-[18px] font-medium text-black transition-colors hover:text-[#FD5B44] dark:text-white dark:hover:text-[#FD5B44]"
           >
             Explore All
           </Link>
@@ -221,15 +249,16 @@ export default function Category() {
         {error && (
           <div className="flex min-h-[300px] items-center justify-center">
             <div className="text-center">
-              <p className="text-lg text-rose-500">{error}</p>
-              <p className="mt-2 text-sm text-purple-900/60 dark:text-purple-300/60">
+              <p className="text-lg text-red-500">{error}</p>
+
+              <p className="mt-2 text-sm text-black/60 dark:text-white/60">
                 Please check the categories API.
               </p>
 
               <button
                 type="button"
                 onClick={() => window.location.reload()}
-                className="mt-4 rounded-xl bg-purple-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple-500/20 transition hover:bg-purple-700"
+                className="mt-4 rounded-xl bg-black px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-[#FD5B44]"
               >
                 Try Again
               </button>
@@ -244,10 +273,11 @@ export default function Category() {
         {!error && categories.length === 0 && (
           <div className="flex min-h-[300px] items-center justify-center">
             <div className="text-center">
-              <p className="text-lg text-purple-900/60 dark:text-purple-300/60">
+              <p className="text-lg text-black/60 dark:text-white/60">
                 No categories found.
               </p>
-              <p className="mt-2 text-sm text-purple-900/40 dark:text-purple-300/40">
+
+              <p className="mt-2 text-sm text-black/40 dark:text-white/40">
                 Please check the categories API response.
               </p>
             </div>
@@ -260,36 +290,55 @@ export default function Category() {
 
         {!error && categories.length > 0 && (
           <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-4">
-            {/* LEFT SIDE BANNER */}
-            <div className="group relative flex min-h-[320px] flex-col justify-end overflow-hidden rounded-2xl bg-gradient-to-br from-purple-950 via-purple-900 to-indigo-950 p-8 text-white shadow-lg shadow-purple-950/10 lg:min-h-[auto]">
+            {/* =================================================
+                LEFT SIDE BANNER
+                ================================================= */}
+
+            <div className="group relative flex min-h-[320px] flex-col justify-end overflow-hidden rounded-2xl bg-[#FD5B44] p-8 text-white shadow-lg shadow-black/10 lg:min-h-[auto]">
+              {/* BANNER IMAGE */}
               <Image
                 src={bannerImg}
                 alt="Special Offer Banner"
                 width={600}
                 height={600}
-                className="absolute inset-0 h-full w-full object-cover opacity-40 transition-transform duration-500 group-hover:scale-105"
+                className="absolute inset-0 h-full w-full object-cover opacity-25 transition-transform duration-500 group-hover:scale-105"
               />
+
+              {/* DARK OVERLAY */}
+              <div className="absolute inset-0 bg-black/10 transition-all duration-300 group-hover:bg-black/20" />
+
+              {/* CONTENT */}
               <div className="relative z-10">
-                <span className="inline-block rounded-full bg-purple-500 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white shadow-sm">
+                {/* BADGE */}
+                <span className="inline-block rounded-full bg-black px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white shadow-sm">
                   Special Offer
                 </span>
+
+                {/* TITLE */}
                 <h3 className="mt-3 text-2xl font-bold leading-tight text-white">
                   Upgrade Your Tech Setup
                 </h3>
-                <p className="mt-2 text-sm text-purple-100/80">
+
+                {/* DESCRIPTION */}
+                <p className="mt-2 text-sm text-white/85">
                   Get up to 30% off on top tech electronics categories.
                 </p>
+
+                {/* SHOP BUTTON */}
                 <Link
                   href="/shop"
-                  className="mt-5 inline-block rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-purple-950 shadow-sm transition hover:bg-purple-600 hover:text-white"
+                  className="mt-5 inline-block rounded-xl bg-black px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-300 hover:bg-white hover:text-black"
                 >
                   Shop Now
                 </Link>
               </div>
             </div>
 
-            {/* RIGHT SIDE CATEGORY GRID */}
-            <div className="grid grid-cols-1 overflow-hidden rounded-2xl border border-purple-100 bg-white sm:grid-cols-2 lg:col-span-3 lg:grid-cols-3 dark:border-purple-900/40 dark:bg-slate-900">
+            {/* =================================================
+                RIGHT SIDE CATEGORY GRID
+                ================================================= */}
+
+            <div className="grid grid-cols-1 overflow-hidden rounded-2xl border border-gray-200 bg-white sm:grid-cols-2 lg:col-span-3 lg:grid-cols-3 dark:border-gray-800 dark:bg-black">
               {categories.slice(0, 6).map((category, index) => {
                 const productCount =
                   category.productsCount ??
@@ -298,16 +347,20 @@ export default function Category() {
                     ? category.products.length
                     : 0);
 
-                const categoryId = category._id || String(index);
+                const categoryId =
+                  category._id || String(index);
 
                 return (
                   <Link
                     key={categoryId}
                     href={`/shop?category=${categoryId}`}
-                    className="group flex min-h-[160px] items-center gap-4 border-b border-r border-purple-100 bg-white px-6 transition-all duration-300 hover:bg-purple-50/60 sm:px-8 dark:border-purple-900/40 dark:bg-slate-900 dark:hover:bg-purple-950/20"
+                    className="group flex min-h-[160px] items-center gap-4 border-b border-r border-gray-200 bg-white px-6 transition-all duration-300 hover:bg-[#FD5B44]/5 sm:px-8 dark:border-gray-800 dark:bg-black dark:hover:bg-[#FD5B44]/10"
                   >
-                    {/* IMAGE */}
-                    <div className="flex h-[84px] w-[84px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-purple-50 dark:bg-slate-800">
+                    {/* =================================================
+                        IMAGE
+                        ================================================= */}
+
+                    <div className="flex h-[84px] w-[84px] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-900">
                       <Image
                         src={getCategoryImage(category.image)}
                         alt={category.name || "Category"}
@@ -317,12 +370,18 @@ export default function Category() {
                       />
                     </div>
 
-                    {/* CONTENT */}
+                    {/* =================================================
+                        CONTENT
+                        ================================================= */}
+
                     <div className="min-w-0">
-                      <h3 className="text-[16px] font-semibold leading-6 text-purple-950 transition-colors group-hover:text-purple-600 dark:text-purple-100 dark:group-hover:text-purple-400">
+                      {/* CATEGORY NAME */}
+                      <h3 className="text-[16px] font-semibold leading-6 text-black transition-colors duration-300 group-hover:text-[#FD5B44] dark:text-white dark:group-hover:text-[#FD5B44]">
                         {category.name}
                       </h3>
-                      <p className="mt-1 text-[14px] text-purple-900/60 dark:text-purple-300/60">
+
+                      {/* PRODUCT COUNT */}
+                      <p className="mt-1 text-[14px] text-black/60 dark:text-white/60">
                         {productCount} Products
                       </p>
                     </div>

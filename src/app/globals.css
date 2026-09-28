@@ -5,14 +5,31 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #ffffff;
+    --background: #ffffff;
   --foreground: #171717;
+  --font-title: var(--font-jost);
+  --font-body: var(--font-dm-sans);
+}
+
+body {
+  font-family: var(--font-body);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-title);
 }
 
 .dark {
   --background: #0a0a0a;
   --foreground: #ededed;
 }
+
+
 
 @theme inline {
   --color-background: var(--background);
@@ -124,4 +141,18 @@ html.lenis body {
 
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
+}
+
+html,
+body {
+  font-family: var(--font-dm-sans), sans-serif !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-jost), sans-serif !important;
 }

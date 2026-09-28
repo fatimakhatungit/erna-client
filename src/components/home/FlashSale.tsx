@@ -158,7 +158,7 @@ function ProductCard({ product }: { product: Product }) {
       className="group relative flex h-full flex-col overflow-hidden rounded-xl bg-white shadow-md shadow-purple-900/5 border border-purple-100"
     >
       {/* IMAGE CONTAINER */}
-      <div className="relative mx-2 mt-2 flex h-[243px] items-center justify-center overflow-hidden rounded-lg bg-[#FAF5FF]">
+      <div className="relative mx-2 mt-2 flex h-[243px] items-center justify-center overflow-hidden rounded-lg">
         <Image
           src={image}
           alt={product.name || "Product image"}
@@ -223,7 +223,7 @@ function ProductCard({ product }: { product: Product }) {
 
       {/* CARD CONTENT */}
       <div className="flex flex-1 flex-col px-6 pb-6 pt-5">
-        <h3 className="min-h-[52px] text-[16px] font-semibold leading-[1.45] text-purple-950">
+        <h3 className="min-h-[52px] text-[16px] font-semibold leading-[1.45] text-black">
           <Link
             href={`/shop-details/${product._id}`}
             className="transition-colors hover:text-[#FD5B44]"
@@ -235,23 +235,23 @@ function ProductCard({ product }: { product: Product }) {
         {/* RATING */}
         <div className="mt-2 flex items-center gap-3">
           <div
-            className="flex gap-[1px] text-[19px] leading-none text-purple-600"
+            className="flex gap-[1px] text-[19px] leading-none text-[#FD5B44]"
             aria-label={`Rated ${rating} out of 5`}
           >
             {getRatingStars(rating).map((star, index) => (
               <span key={index}>{star}</span>
             ))}
           </div>
-          <span className="text-[13px] text-purple-400">({rating})</span>
+          <span className="text-[13px] text-black">({rating})</span>
         </div>
 
         {/* PRICE */}
         <div className="mt-3 flex items-center gap-2">
-          <span className="text-[17px] font-bold text-purple-950">
+          <span className="text-[17px] font-bold text-black">
             ${price.toFixed(2)}
           </span>
           {product.discount !== undefined && product.discount > 0 && (
-            <del className="text-[14px] text-purple-300">
+            <del className="text-[14px] text-[#999999]">
               ${oldPrice.toFixed(2)}
             </del>
           )}
@@ -262,54 +262,78 @@ function ProductCard({ product }: { product: Product }) {
           <Check
             size={15}
             strokeWidth={1.8}
-            className={stock > 0 ? "text-purple-600" : "text-rose-500"}
+            className={stock > 0 ? "text-[#22AC5C]" : "text-rose-500"}
           />
           <span
             className={
-              stock > 0 ? "text-purple-600 font-medium" : "text-rose-500"
+              stock > 0 ? "text-[#22AC5C] font-medium" : "text-rose-500"
             }
           >
             {stock > 0 ? "In Stock" : "Out of Stock"}
           </span>
           {stock > 0 && (
-            <span className="text-purple-950">{stock} Products</span>
+            <span className="text-black">{stock} Products</span>
           )}
         </div>
 
         {/* ADD TO CART BUTTON */}
-        <motion.button
-          whileTap={stock > 0 ? { scale: 0.98 } : {}}
-          type="button"
-          disabled={stock <= 0 || adding}
-          onClick={handleAddToCart}
-          className={`mt-5 flex h-[48px] w-full items-center justify-center rounded-lg border bg-transparent text-[15px] font-semibold uppercase transition-all duration-300 ${
-            stock <= 0
-              ? "cursor-not-allowed border-purple-200 text-purple-300"
-              : added
-                ? "border-purple-700 bg-[#FD5B44] text-white"
-                : "border-purple-200 text-purple-900 hover:border-[#FD5B44] hover:bg-[#FD5B44] hover:text-white"
-          }`}
-        >
-          {adding ? (
-            <Loader2 size={18} className="animate-spin" />
-          ) : added ? (
-            <motion.div
-              initial={{ scale: 0.8 }}
-              animate={{ scale: 1 }}
-              className="flex items-center"
-            >
-              <Check size={18} className="mr-1.5" />
-              Added
-            </motion.div>
-          ) : stock <= 0 ? (
-            "Out of Stock"
-          ) : (
-            <>
-              <ShoppingBag size={18} className="mr-1.5" />
-              Add To Cart
-            </>
-          )}
-        </motion.button>
+        {/* ADD TO CART BUTTON */}
+<motion.button
+  whileTap={stock > 0 ? { scale: 0.97 } : {}}
+  type="button"
+  disabled={stock <= 0 || adding}
+  onClick={handleAddToCart}
+  className={`group/cart relative mt-5 flex h-[48px] w-full items-center justify-center overflow-hidden rounded-lg border text-[14px] font-semibold uppercase tracking-wide transition-all duration-300 ${
+    stock <= 0
+      ? "cursor-not-allowed border-[#E7F1F1] bg-transparent text-purple-300"
+      : added
+        ? "border-[#FD5B44] bg-[#FD5B44] text-white"
+        : "border-[#E7F1F1] bg-transparent text-black hover:border-[#FD5B44]"
+  }`}
+>
+  {adding ? (
+    /* LOADING */
+    <motion.div
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="flex items-center gap-2"
+    >
+      <Loader2 size={17} className="animate-spin" />
+      <span>ADDING...</span>
+    </motion.div>
+  ) : added ? (
+    /* SUCCESS */
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex items-center gap-2"
+    >
+      <Check size={18} />
+      <span>ADDED!</span>
+    </motion.div>
+  ) : stock <= 0 ? (
+    /* OUT OF STOCK */
+    <span>OUT OF STOCK</span>
+  ) : (
+    /* NORMAL + HOVER */
+    <>
+      {/* Hover background */}
+      <span className="absolute inset-0 translate-y-full bg-[#FD5B44] transition-transform duration-300 ease-out group-hover/cart:translate-y-0" />
+
+      {/* Normal text */}
+      <span className="relative flex items-center gap-2 transition-all duration-300 ease-out group-hover/cart:-translate-y-10 group-hover/cart:opacity-0">
+        <ShoppingBag size={18} />
+        <span>ADD TO CART</span>
+      </span>
+
+      {/* Hover text */}
+      <span className="absolute flex translate-y-10 items-center gap-2 text-white opacity-0 transition-all duration-300 ease-out group-hover/cart:translate-y-0 group-hover/cart:opacity-100">
+        <ShoppingBag size={18} />
+        <span>ADD TO CART</span>
+      </span>
+    </>
+  )}
+</motion.button>
       </div>
     </motion.div>
   );
@@ -394,7 +418,7 @@ export default function FlashSale() {
   }, []);
 
   return (
-    <section className="overflow-hidden bg-[#FAF5FF] dark:bg-[#0b1325] rounded-2xl dark:text-white py-[60px] md:py-[70px]">
+    <section className="overflow-hidden  rounded-2xl dark:text-white py-[60px] md:py-[70px]">
       <div className="mx-auto w-full max-w-[1860px] px-5 lg:px-8">
         {/* HEADER */}
         <motion.div
@@ -404,10 +428,10 @@ export default function FlashSale() {
           className="mb-8 flex flex-col justify-between gap-7 xl:flex-row xl:items-center"
         >
           <div>
-            <h2 className="text-[30px] font-bold leading-none text-purple-950 dark:text-white sm:text-[34px] md:text-[38px]">
+            <h2 className="text-[30px] font-bold leading-none text-black dark:text-white sm:text-[34px] md:text-[38px]">
               Flash Sale Today
             </h2>
-            <div className="relative mt-5 h-[2px] w-[250px] bg-purple-200 sm:w-[308px]">
+            <div className="relative mt-5 h-[2px] w-[250px] bg-[#E0E8F0] sm:w-[308px]">
               <motion.span
                 initial={{ width: 0 }}
                 animate={{ width: "150px" }}
@@ -444,7 +468,7 @@ export default function FlashSale() {
             ].map((unit) => (
               <div
                 key={unit.label}
-                className="flex h-[52px] w-[57px] flex-col items-center justify-center rounded-lg bg-[#FD5B44] text-white shadow-md shadow-purple-300"
+                className="flex h-[52px] w-[57px] flex-col items-center justify-center rounded-lg bg-[#FD5B44] text-white"
               >
                 <AnimatePresence mode="popLayout">
                   <motion.span
@@ -464,7 +488,7 @@ export default function FlashSale() {
 
             <Link
               href="/shop"
-              className="ml-1 text-[16px] font-semibold text-purple-950 transition-colors hover:text-[#FD5B44] sm:text-[18px]"
+              className="ml-1 text-[16px] font-semibold text-black transition-colors hover:text-[#FD5B44] sm:text-[18px]"
             >
               Explore All
             </Link>
@@ -495,7 +519,7 @@ export default function FlashSale() {
               <button
                 type="button"
                 onClick={() => window.location.reload()}
-                className="mt-4 rounded-md bg-purple-950 px-5 py-2 text-sm font-medium text-white transition hover:bg-[#FD5B44]"
+                className="mt-4 rounded-md bg-black px-5 py-2 text-sm font-medium text-white transition hover:bg-[#FD5B44]"
               >
                 Try Again
               </button>
@@ -506,7 +530,7 @@ export default function FlashSale() {
         {/* EMPTY STATE */}
         {!loading && !error && products.length === 0 && (
           <div className="flex min-h-[400px] items-center justify-center">
-            <p className="text-lg text-purple-400">
+            <p className="text-lg text-black">
               No flash sale products found.
             </p>
           </div>
@@ -528,9 +552,9 @@ export default function FlashSale() {
                 480: { slidesPerView: 1, spaceBetween: 18 },
                 640: { slidesPerView: 2, spaceBetween: 18 },
                 768: { slidesPerView: 3, spaceBetween: 20 },
-                1024: { slidesPerView: 4, spaceBetween: 22 },
-                1280: { slidesPerView: 5, spaceBetween: 22 },
-                1536: { slidesPerView: 6, spaceBetween: 24 },
+                1024: { slidesPerView: 3, spaceBetween: 22 },
+                1280: { slidesPerView: 4, spaceBetween: 22 },
+                1636: { slidesPerView: 5, spaceBetween: 24 },
               }}
             >
               {products.map((product) => (
@@ -547,12 +571,12 @@ export default function FlashSale() {
               type="button"
               aria-label="Previous products"
               onClick={() => swiperRef.current?.slidePrev()}
-              className="group absolute left-[-18px] top-1/2 z-30 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-purple-200 bg-white shadow-md transition-all duration-300 hover:bg-purple-950 md:flex lg:left-[-22px]"
+              className="group absolute left-[-18px] top-1/2 z-30 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-purple-200 bg-white shadow-md transition-all duration-300 hover:bg-[#FD5B44] md:flex lg:left-[-22px]"
             >
               <ChevronLeft
                 size={26}
                 strokeWidth={2}
-                className="text-purple-950 transition-colors group-hover:text-white"
+                className="text-black transition-colors group-hover:text-white"
               />
             </motion.button>
 
@@ -563,12 +587,12 @@ export default function FlashSale() {
               type="button"
               aria-label="Next products"
               onClick={() => swiperRef.current?.slideNext()}
-              className="group absolute right-[-18px] top-1/2 z-30 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-purple-200 bg-white shadow-md transition-all duration-300 hover:bg-purple-950 md:flex lg:right-[-22px]"
+              className="group absolute right-[-18px] top-1/2 z-30 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-purple-200 bg-white shadow-md transition-all duration-300 hover:bg-black md:flex lg:right-[-22px]"
             >
               <ChevronRight
                 size={26}
                 strokeWidth={2}
-                className="text-purple-950 transition-colors group-hover:text-white"
+                className="text-black transition-colors group-hover:text-white"
               />
             </motion.button>
           </div>
@@ -578,7 +602,7 @@ export default function FlashSale() {
         <div className="mt-7 text-center md:hidden">
           <Link
             href="/shop"
-            className="text-[17px] font-semibold text-purple-950 transition-colors hover:text-[#FD5B44]"
+            className="text-[17px] font-semibold text-black transition-colors hover:text-[#FD5B44]"
           >
             Explore All
           </Link>
