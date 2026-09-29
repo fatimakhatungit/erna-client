@@ -43,7 +43,7 @@ const AVATARS = [
 
 export default function BentoPromoSection() {
   return (
-    <section className="w-full bg-purple-50/50 py-12 transition-colors duration-300 dark:bg-slate-950">
+    <section className="w-full bg-white py-12 transition-colors duration-300 dark:bg-black">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-5 md:grid-cols-12">
           {/* ================= CARD 1: MORE PRODUCTS ================= */}
@@ -51,15 +51,16 @@ export default function BentoPromoSection() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: 0.05 }}
-            className="relative flex flex-col justify-between rounded-3xl border border-purple-100 bg-white p-6 shadow-sm transition-all duration-300 hover:border-purple-200 hover:shadow-md dark:border-purple-900/40 dark:bg-slate-900 md:col-span-4"
+            className="relative flex flex-col justify-between rounded-3xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300 hover:border-[#FD5B44] hover:shadow-md dark:border-gray-800 dark:bg-[#0b0b0b] md:col-span-4"
           >
             {/* Header */}
             <div className="flex items-start justify-between">
               <div>
-                <h3 className="text-xl font-bold tracking-tight text-purple-950 dark:text-purple-100">
+                <h3 className="text-xl font-bold tracking-tight text-black dark:text-white">
                   More Products
                 </h3>
-                <p className="mt-1 text-sm font-medium text-purple-700/70 dark:text-purple-300/70">
+
+                <p className="mt-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                   460 plus items
                 </p>
               </div>
@@ -68,9 +69,9 @@ export default function BentoPromoSection() {
               <button
                 type="button"
                 aria-label="Add to favorites"
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-purple-50 text-purple-600 transition-all hover:bg-purple-100 active:scale-95 dark:bg-purple-950/60 dark:text-purple-300"
+                className="flex h-11 w-11 items-center justify-center rounded-full bg-[#FD5B44]/10 text-[#FD5B44] transition-all duration-300 hover:bg-[#FD5B44] hover:text-white active:scale-95"
               >
-                <Heart className="h-5 w-5 fill-purple-600 dark:fill-purple-300" />
+                <Heart className="h-5 w-5 fill-current" />
               </button>
             </div>
 
@@ -79,7 +80,7 @@ export default function BentoPromoSection() {
               {PRODUCTS.map((item) => (
                 <div
                   key={item.id}
-                  className="relative flex aspect-square flex-1 items-center justify-center overflow-hidden rounded-2xl bg-purple-50/80 dark:bg-purple-950/40"
+                  className="relative flex aspect-square flex-1 items-center justify-center overflow-hidden rounded-2xl bg-gray-100 dark:bg-gray-900"
                 >
                   <Image
                     src={item.src}
@@ -98,7 +99,7 @@ export default function BentoPromoSection() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: 0.1 }}
-            className="relative flex flex-col items-center justify-between rounded-3xl border border-purple-100 bg-white p-6 shadow-sm transition-all duration-300 hover:border-purple-200 hover:shadow-md dark:border-purple-900/40 dark:bg-slate-900 md:col-span-3"
+            className="relative flex flex-col items-center justify-between rounded-3xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300 hover:border-[#FD5B44] hover:shadow-md dark:border-gray-800 dark:bg-[#0b0b0b] md:col-span-3"
           >
             {/* User Avatars */}
             <div className="flex -space-x-2 overflow-hidden">
@@ -107,25 +108,29 @@ export default function BentoPromoSection() {
                   key={avatar.id}
                   width={48}
                   height={48}
-                  className="inline-block h-12 w-12 rounded-full border-2 border-white object-cover ring-2 ring-purple-100 dark:border-slate-900 dark:ring-purple-900/50"
+                  className="inline-block h-12 w-12 rounded-full border-2 border-white object-cover ring-2 ring-gray-200 dark:border-[#0b0b0b] dark:ring-gray-800"
                   src={avatar.src}
                   alt={avatar.alt}
                 />
               ))}
             </div>
 
-            {/* Purple Stats Circle */}
-            <div className="my-5 flex h-28 w-28 flex-col items-center justify-center rounded-full bg-gradient-to-tr from-purple-700 to-purple-500 text-white shadow-lg shadow-purple-500/25">
-              <span className="text-2xl font-black leading-tight">5m+</span>
+            {/* Stats Circle */}
+            <div className="my-5 flex h-28 w-28 flex-col items-center justify-center rounded-full bg-[#FD5B44] text-white shadow-lg shadow-[#FD5B44]/25">
+              <span className="text-2xl font-black leading-tight">
+                5m+
+              </span>
+
               <span className="text-[11px] font-medium opacity-90">
                 Downloads
               </span>
             </div>
 
             {/* Review Badge */}
-            <div className="flex items-center gap-1.5 rounded-full border border-purple-100 bg-purple-50/60 px-4 py-1.5 shadow-sm dark:border-purple-900/50 dark:bg-purple-950/50">
-              <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-              <span className="text-xs font-bold text-purple-950 dark:text-purple-200">
+            <div className="flex items-center gap-1.5 rounded-full border border-gray-200 bg-gray-100 px-4 py-1.5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+              <Star className="h-4 w-4 fill-[#FD5B44] text-[#FD5B44]" />
+
+              <span className="text-xs font-bold text-black dark:text-white">
                 4.6 reviews
               </span>
             </div>
@@ -136,26 +141,28 @@ export default function BentoPromoSection() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, delay: 0.15 }}
-            className="relative flex min-h-[220px] overflow-hidden rounded-3xl border border-purple-100 bg-white p-6 shadow-sm transition-all duration-300 hover:border-purple-200 hover:shadow-md dark:border-purple-900/40 dark:bg-slate-900 md:col-span-5"
+            className="relative flex min-h-[220px] overflow-hidden rounded-3xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300 hover:border-[#FD5B44] hover:shadow-md dark:border-gray-800 dark:bg-[#0b0b0b] md:col-span-5"
           >
             {/* Left Column Content */}
             <div className="z-10 flex w-1/2 flex-col justify-between pr-2">
               <div>
-                <div className="inline-flex items-center gap-1.5 rounded-full border border-purple-200/80 bg-purple-50/80 px-3 py-1 backdrop-blur-md dark:border-purple-800 dark:bg-purple-950/80">
-                  <Flame className="h-3.5 w-3.5 fill-purple-600 text-purple-600 dark:fill-purple-400 dark:text-purple-400" />
-                  <span className="text-xs font-semibold text-purple-900 dark:text-purple-200">
+                {/* Popular Badge */}
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-[#FD5B44]/30 bg-[#FD5B44]/10 px-3 py-1 backdrop-blur-md">
+                  <Flame className="h-3.5 w-3.5 fill-[#FD5B44] text-[#FD5B44]" />
+
+                  <span className="text-xs font-semibold text-[#FD5B44]">
                     Popular
                   </span>
                 </div>
 
-                <h3 className="mt-4 text-xl font-bold leading-snug tracking-tight text-purple-950 dark:text-purple-100">
+                <h3 className="mt-4 text-xl font-bold leading-snug tracking-tight text-black dark:text-white">
                   Listening Has Been Released
                 </h3>
               </div>
 
               {/* Overlapping Audio Avatars */}
               <div className="mt-4 flex -space-x-3">
-                <div className="relative h-10 w-10 overflow-hidden rounded-full border-2 border-white ring-2 ring-purple-100 dark:border-slate-900 dark:ring-purple-900/50">
+                <div className="relative h-10 w-10 overflow-hidden rounded-full border-2 border-white ring-2 ring-gray-200 dark:border-[#0b0b0b] dark:ring-gray-800">
                   <Image
                     src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=150&q=80"
                     alt="Audio Gear"
@@ -164,7 +171,8 @@ export default function BentoPromoSection() {
                     className="object-cover"
                   />
                 </div>
-                <div className="relative h-10 w-10 overflow-hidden rounded-full border-2 border-white ring-2 ring-purple-100 dark:border-slate-900 dark:ring-purple-900/50">
+
+                <div className="relative h-10 w-10 overflow-hidden rounded-full border-2 border-white ring-2 ring-gray-200 dark:border-[#0b0b0b] dark:ring-gray-800">
                   <Image
                     src="https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=150&q=80"
                     alt="Headphones"
@@ -176,8 +184,8 @@ export default function BentoPromoSection() {
               </div>
             </div>
 
-            {/* Right Column Image & Overlay Action */}
-            <div className="relative w-1/2 overflow-hidden rounded-2xl bg-purple-50 dark:bg-purple-950/40">
+            {/* Right Column Image */}
+            <div className="relative w-1/2 overflow-hidden rounded-2xl bg-gray-100 dark:bg-gray-900">
               <Image
                 src="https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=600&q=80"
                 alt="Product in Hand"
@@ -190,15 +198,16 @@ export default function BentoPromoSection() {
               <Link
                 href="/shop"
                 aria-label="Explore Product"
-                className="absolute right-2 top-2 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white text-purple-950 shadow-md transition-transform hover:scale-110 active:scale-95 dark:bg-purple-950 dark:text-purple-100"
+                className="absolute right-2 top-2 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white text-black shadow-md transition-all duration-300 hover:scale-110 hover:bg-[#FD5B44] hover:text-white active:scale-95 dark:bg-black dark:text-white"
               >
                 <ArrowUpRight className="h-5 w-5" />
               </Link>
 
               {/* Rating Chip */}
-              <div className="absolute bottom-2 right-2 z-10 flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 backdrop-blur-md shadow-sm dark:bg-slate-900/90">
-                <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                <span className="text-xs font-bold text-purple-950 dark:text-purple-100">
+              <div className="absolute bottom-2 right-2 z-10 flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 shadow-sm backdrop-blur-md dark:bg-black/90">
+                <Star className="h-3.5 w-3.5 fill-[#FD5B44] text-[#FD5B44]" />
+
+                <span className="text-xs font-bold text-black dark:text-white">
                   4.7
                 </span>
               </div>

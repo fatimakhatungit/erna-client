@@ -674,16 +674,7 @@ export default function FeaturedProducts() {
 
   return (
     <section
-      id="shop-sec"
-      className="
-        w-full
-        overflow-hidden
-        bg-white
-        py-10
-        dark:bg-black
-        md:py-14
-      "
-    >
+      id="shop-sec" className="w-full overflow-hidden md:py-14" >
       <div
         className="
           mx-auto
@@ -745,14 +736,7 @@ export default function FeaturedProducts() {
 
         {/* HEADER LINE */}
 
-        <div
-          className="
-            h-[1px]
-            w-full
-            bg-gray-200
-            dark:bg-gray-800
-          "
-        />
+        <div className="h-[1px] w-full"/>
 
         {/* =================================================
             ERROR STATE

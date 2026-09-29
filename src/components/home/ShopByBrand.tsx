@@ -7,11 +7,19 @@ import { motion } from "framer-motion";
 
 import "swiper/css";
 
+/* =========================================================
+   TYPES
+========================================================= */
+
 type Brand = {
   id: number;
   image: string;
   name: string;
 };
+
+/* =========================================================
+   BRANDS
+========================================================= */
 
 const brands: Brand[] = [
   {
@@ -76,34 +84,81 @@ const brands: Brand[] = [
   },
 ];
 
+/* =========================================================
+   COMPONENT
+========================================================= */
+
 const ShopByBrand = () => {
   return (
-    <section className="overflow-hidden bg-[#FAF5FF] dark:bg-[#0b1325] py-12 lg:py-16">
-      <div className="mx-auto w-full max-w-[1800px] px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+    <section className="overflow-hidden py-12 lg:py-16">
+      <div className="mx-auto w-full">
+        {/* =================================================
+            HEADER
+        ================================================= */}
+
         <motion.div
           initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-8 flex flex-col items-center justify-between gap-4 lg:flex-row"
+          className="
+            mb-8
+            flex
+            flex-col
+            items-center
+            justify-between
+            gap-4
+            lg:flex-row
+          "
         >
+          {/* TITLE */}
+
           <div>
-            <h2 className="text-center text-2xl font-bold text-purple-950 dark:text-white sm:text-3xl lg:text-left">
+            <h2
+              className="
+                text-center
+                text-2xl
+                font-bold
+                text-black
+                dark:text-white
+                sm:text-3xl
+                lg:text-left
+              "
+            >
               Shop By Brand
             </h2>
           </div>
 
+          {/* EXPLORE ALL */}
+
           <div className="w-full text-center lg:w-auto lg:text-right">
             <Link
               href="/brands"
-              className="inline-flex items-center border-b-2 border-purple-700 pb-1 text-sm font-semibold text-[#FD5B44] transition-all duration-300 hover:border-purple-950 hover:text-purple-950"
+              className="
+                inline-flex
+                items-center
+                border-b-2
+                border-[#FD5B44]
+                pb-1
+                text-sm
+                font-semibold
+                text-[#FD5B44]
+                transition-all
+                duration-300
+                hover:border-black
+                hover:text-black
+                dark:hover:border-white
+                dark:hover:text-white
+              "
             >
               Explore All
             </Link>
           </div>
         </motion.div>
 
-        {/* Brand Slider */}
+        {/* =================================================
+            BRAND SLIDER
+        ================================================= */}
+
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -142,19 +197,18 @@ const ShopByBrand = () => {
             }}
             className="w-full py-2"
           >
-            {brands.map((brand: Brand) => (
+            {brands.map((brand) => (
               <SwiperSlide key={brand.id}>
                 <motion.div
                   whileHover={{ y: -4 }}
                   transition={{ duration: 0.2 }}
-                  className="group flex h-[135px] items-center justify-center rounded-xl border border-purple-100 bg-white px-4 shadow-sm shadow-purple-900/5 transition-all duration-300 hover:border-purple-300 hover:shadow-md hover:shadow-purple-950/10"
-                >
+                  className="" >
                   <Image
                     src={brand.image}
                     alt={brand.name}
                     width={200}
                     height={100}
-                    className="h-auto max-h-[90px] w-auto max-w-[180px] object-contain transition-transform duration-300 group-hover:scale-105"
+                    className=""
                   />
                 </motion.div>
               </SwiperSlide>

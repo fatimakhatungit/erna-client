@@ -189,7 +189,7 @@ function ProductCard({ product }: { product: Product }) {
             className={`flex h-9 w-9 items-center justify-center rounded-full shadow-md transition-colors ${
               wishlisted
                 ? "bg-[#FD5B44] text-white"
-                : "bg-white text-purple-900 hover:bg-[#FD5B44] hover:text-white"
+                : "bg-white text-black hover:bg-[#FD5B44] hover:text-white"
             }`}
           >
             {wishlistPending ? (
@@ -201,9 +201,9 @@ function ProductCard({ product }: { product: Product }) {
 
           <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
             <Link
-              href="/compare"
+              href="/cart"
               aria-label="Compare product"
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-purple-900 shadow-md transition-colors hover:bg-[#FD5B44] hover:text-white"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow-md transition-colors hover:bg-[#FD5B44] hover:text-white"
             >
               <ArrowLeftRight size={17} />
             </Link>
@@ -213,7 +213,7 @@ function ProductCard({ product }: { product: Product }) {
             <Link
               href={`/products/${product._id}`}
               aria-label="Quick view"
-              className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-purple-900 shadow-md transition-colors hover:bg-[#FD5B44] hover:text-white"
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-black shadow-md transition-colors hover:bg-[#FD5B44] hover:text-white"
             >
               <Eye size={17} />
             </Link>

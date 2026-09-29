@@ -322,7 +322,7 @@ function ProductCard({ product }: { product: Product }) {
           {/* Compare */}
 
           <Link
-            href="/compare"
+            href="/cart"
             aria-label="Compare product"
             className="
               flex
