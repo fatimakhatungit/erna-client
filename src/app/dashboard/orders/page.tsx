@@ -121,7 +121,7 @@ export default function OrdersPage() {
           </div>
 
           <select
-            className="rounded-lg border border-[#DEDACE] bg-white px-3 py-2 text-sm text-[#6B7268] outline-none focus:border-[#C08A3E] focus:ring-2 focus:ring-[#C08A3E]/10"
+            className="rounded-lg border border-[#DEDACE] bg-white px-3 py-2 text-sm text-[#6B7268] outline-none focus:border-[#FD5B44] focus:ring-2 focus:ring-[#FD5B44]/10"
             defaultValue="all"
           >
             <option value="all">All orders</option>
@@ -206,7 +206,7 @@ export default function OrdersPage() {
                     <td className="px-5 py-4 text-right">
                       <Link
                         href={`/dashboard/orders/${order.id}`}
-                        className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold text-[#C08A3E] transition-colors hover:bg-[#F4F2EC]"
+                        className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold text-[#FD5B44] transition-colors hover:bg-[#F4F2EC]"
                       >
                         <Eye size={15} />
                         View
@@ -280,7 +280,7 @@ export default function OrdersPage() {
       {/* Back to Dashboard */}
       <Link
         href="/dashboard"
-        className="inline-flex items-center text-sm font-medium text-[#6B7268] transition-colors hover:text-[#C08A3E]"
+        className="inline-flex items-center text-sm font-medium text-[#6B7268] transition-colors hover:text-[#FD5B44]"
       >
         ← Back to dashboard
       </Link>

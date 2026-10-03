@@ -56,19 +56,23 @@ const navLinks: NavItem[] = [
     href: "/",
      dropdown: [
       {
-        name: "Home fashion-shop",
+        name: "Electronics Shop",
+        href: "/",
+      }, 
+      {
+        name: "fashion-shop",
         href: "/home-2",
       },
       {
-        name: "Home Grocery-shop",
+        name: "Grocery-shop",
         href: "/home-3",
       },
       {
-        name: "Home Coffee Shop",
+        name: "Coffee Shop",
         href: "/home-4",
       },
       {
-        name: "Home Furniture Shop",
+        name: "Furniture Shop",
         href: "/home-5",
       },
     ],

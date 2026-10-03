@@ -144,7 +144,7 @@ export default function Sidebar({
                 >
                   {/* Active indicator */}
                   {isActive && (
-                    <span className="absolute left-0 h-6 w-1 rounded-r-full bg-[#C08A3E]" />
+                    <span className="absolute left-0 h-6 w-1 rounded-r-full bg-[#FD5B44]" />
                   )}
 
                   <Icon
@@ -152,7 +152,7 @@ export default function Sidebar({
                     strokeWidth={isActive ? 2.2 : 1.8}
                     className={
                       isActive
-                        ? "text-[#C08A3E]"
+                        ? "text-[#FD5B44]"
                         : "text-[#7B8178] group-hover:text-[#0E1B1B]"
                     }
                   />

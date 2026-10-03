@@ -163,7 +163,7 @@ export default function ProfilePage() {
         <div className="relative mb-8 overflow-hidden rounded-2xl border border-[#DEDACE] bg-white shadow-sm">
           {/* Banner accent */}
           <div className="h-28 bg-gradient-to-r from-[#0E1B1B] via-[#1a3330] to-[#0E1B1B]">
-            <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-[#C08A3E]/10 blur-3xl" />
+            <div className="absolute -right-20 -top-20 h-56 w-56 rounded-full bg-[#FD5B44]/10 blur-3xl" />
           </div>
 
           <div className="relative -mt-14 px-6 pb-6 sm:px-8">
@@ -175,7 +175,7 @@ export default function ProfilePage() {
               <button
                 type="button"
                 aria-label="Change avatar"
-                className="absolute bottom-1 right-1 flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[#C08A3E] text-white shadow-md transition hover:bg-[#a87732]"
+                className="absolute bottom-1 right-1 flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-[#FD5B44] text-white shadow-md transition hover:bg-[#a87732]"
               >
                 <Camera size={16} />
               </button>
@@ -288,7 +288,7 @@ export default function ProfilePage() {
                       type="text"
                       value={displayName}
                       onChange={(e) => setDisplayName(e.target.value)}
-                      className="w-full rounded-xl border border-[#DEDACE] bg-[#FAF9F6] py-3 pl-10 pr-4 text-[15px] text-[#14181B] outline-none transition placeholder:text-[#A6A196] focus:border-[#C08A3E] focus:ring-4 focus:ring-[#C08A3E]/15"
+                      className="w-full rounded-xl border border-[#DEDACE] bg-[#FAF9F6] py-3 pl-10 pr-4 text-[15px] text-[#14181B] outline-none transition placeholder:text-[#A6A196] focus:border-[#FD5B44] focus:ring-4 focus:ring-[#FD5B44]/15"
                       placeholder="Your display name"
                     />
                   </div>
@@ -410,7 +410,7 @@ export default function ProfilePage() {
                     type={showCurrent ? "text" : "password"}
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="w-full rounded-xl border border-[#DEDACE] bg-[#FAF9F6] py-3 pl-10 pr-12 text-[15px] text-[#14181B] outline-none transition placeholder:text-[#A6A196] focus:border-[#C08A3E] focus:ring-4 focus:ring-[#C08A3E]/15"
+                    className="w-full rounded-xl border border-[#DEDACE] bg-[#FAF9F6] py-3 pl-10 pr-12 text-[15px] text-[#14181B] outline-none transition placeholder:text-[#A6A196] focus:border-[#FD5B44] focus:ring-4 focus:ring-[#FD5B44]/15"
                     placeholder="Enter current password"
                     autoComplete="current-password"
                   />
@@ -442,7 +442,7 @@ export default function ProfilePage() {
                     type={showNew ? "text" : "password"}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full rounded-xl border border-[#DEDACE] bg-[#FAF9F6] py-3 pl-10 pr-12 text-[15px] text-[#14181B] outline-none transition placeholder:text-[#A6A196] focus:border-[#C08A3E] focus:ring-4 focus:ring-[#C08A3E]/15"
+                    className="w-full rounded-xl border border-[#DEDACE] bg-[#FAF9F6] py-3 pl-10 pr-12 text-[15px] text-[#14181B] outline-none transition placeholder:text-[#A6A196] focus:border-[#FD5B44] focus:ring-4 focus:ring-[#FD5B44]/15"
                     placeholder="Minimum 8 characters"
                     autoComplete="new-password"
                   />
@@ -479,7 +479,7 @@ export default function ProfilePage() {
                     type="password"
                     value={confirmNewPassword}
                     onChange={(e) => setConfirmNewPassword(e.target.value)}
-                    className="w-full rounded-xl border border-[#DEDACE] bg-[#FAF9F6] py-3 pl-10 pr-4 text-[15px] text-[#14181B] outline-none transition placeholder:text-[#A6A196] focus:border-[#C08A3E] focus:ring-4 focus:ring-[#C08A3E]/15"
+                    className="w-full rounded-xl border border-[#DEDACE] bg-[#FAF9F6] py-3 pl-10 pr-4 text-[15px] text-[#14181B] outline-none transition placeholder:text-[#A6A196] focus:border-[#FD5B44] focus:ring-4 focus:ring-[#FD5B44]/15"
                     placeholder="Re-enter new password"
                     autoComplete="new-password"
                   />

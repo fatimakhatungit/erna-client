@@ -110,7 +110,7 @@ export default function DashboardPage() {
 
           <Link
             href="/dashboard/orders"
-            className="text-sm font-medium text-[#C08A3E] hover:underline"
+            className="text-sm font-medium text-[#FD5B44] hover:underline"
           >
             View all
           </Link>

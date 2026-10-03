@@ -49,14 +49,14 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
           <button
             type="button"
             aria-label="Notifications"
-            className="relative flex h-9 w-9 items-center justify-center rounded-full text-[#6B7268] transition-all hover:bg-[#F4F2EC] hover:text-[#0E1B1B] focus:outline-none focus:ring-2 focus:ring-[#C08A3E]/40"
+            className="relative flex h-9 w-9 items-center justify-center rounded-full text-[#6B7268] transition-all hover:bg-[#F4F2EC] hover:text-[#0E1B1B] focus:outline-none focus:ring-2 focus:ring-[#FD5B44]/40"
           >
             <Bell size={18} strokeWidth={1.8} />
 
             {/* Notification indicator */}
             <span
               aria-hidden="true"
-              className="absolute right-[8px] top-[7px] h-2 w-2 rounded-full border-2 border-white bg-[#C08A3E]"
+              className="absolute right-[8px] top-[7px] h-2 w-2 rounded-full border-2 border-white bg-[#FD5B44]"
             />
           </button>
 
@@ -66,7 +66,7 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
           {/* Profile */}
           <button
             type="button"
-            className="group flex items-center gap-2 rounded-xl p-1.5 transition-colors hover:bg-[#F4F2EC] focus:outline-none focus:ring-2 focus:ring-[#C08A3E]/40 sm:gap-3 sm:pr-2"
+            className="group flex items-center gap-2 rounded-xl p-1.5 transition-colors hover:bg-[#F4F2EC] focus:outline-none focus:ring-2 focus:ring-[#FD5B44]/40 sm:gap-3 sm:pr-2"
           >
             {/* Avatar */}
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#0E1B1B] text-sm font-semibold text-white shadow-sm">

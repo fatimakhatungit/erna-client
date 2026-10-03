@@ -56,7 +56,7 @@ export default function DashboardPage() {
       <div className="bg-white border border-[#DEDACE] rounded-xl shadow-sm overflow-hidden">
         <div className="p-5 border-b border-[#DEDACE] flex justify-between items-center">
           <h3 className="font-semibold text-[#0E1B1B]">Recent Purchases</h3>
-          <Link href="/dashboard/orders" className="text-sm font-medium text-[#C08A3E] hover:underline">
+          <Link href="/dashboard/orders" className="text-sm font-medium text-[#FD5B44] hover:underline">
             View all
           </Link>
         </div>

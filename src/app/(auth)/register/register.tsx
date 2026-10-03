@@ -111,7 +111,7 @@ export default function RegisterPage() {
             Already have an account?{" "}
             <Link
               href="/login"
-              className="font-semibold text-[#0E1B1B] hover:text-[#C08A3E]"
+              className="font-semibold text-[#0E1B1B] hover:text-[#FD5B44]"
             >
               Sign in
             </Link>
@@ -201,20 +201,20 @@ export default function RegisterPage() {
             <input
               type="checkbox"
               required
-              className="mt-1 h-4 w-4 rounded border-[#DEDACE] text-[#0E1B1B] focus:ring-[#C08A3E]"
+              className="mt-1 h-4 w-4 rounded border-[#DEDACE] text-[#0E1B1B] focus:ring-[#FD5B44]"
             />
             <span className="text-xs leading-5 text-[#6B7268]">
               I agree to the erna{" "}
               <Link
                 href="/terms"
-                className="font-medium text-[#0E1B1B] hover:text-[#C08A3E]"
+                className="font-medium text-[#0E1B1B] hover:text-[#FD5B44]"
               >
                 Terms of Service
               </Link>{" "}
               and{" "}
               <Link
                 href="/privacy"
-                className="font-medium text-[#0E1B1B] hover:text-[#C08A3E]"
+                className="font-medium text-[#0E1B1B] hover:text-[#FD5B44]"
               >
                 Privacy Policy
               </Link>

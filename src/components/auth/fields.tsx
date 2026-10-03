@@ -36,7 +36,7 @@ export function TextInput(props: InputHTMLAttributes<HTMLInputElement>) {
     <input
       {...props}
       className={
-        "w-full rounded-lg border border-[#DEDACE] bg-white px-4 py-3 text-[15px] text-[#14181B] outline-none transition placeholder:text-[#A6A196] focus:border-[#C08A3E] focus:ring-4 focus:ring-[#C08A3E]/15 " +
+        "w-full rounded-lg border border-[#DEDACE] bg-white px-4 py-3 text-[15px] text-[#14181B] outline-none transition placeholder:text-[#A6A196] focus:border-[#FD5B44] focus:ring-4 focus:ring-[#FD5B44]/15 " +
         (props.className ?? "")
       }
     />
@@ -52,7 +52,7 @@ export function PasswordInput(props: InputHTMLAttributes<HTMLInputElement>) {
         {...props}
         type={visible ? "text" : "password"}
         className={
-          "w-full rounded-lg border border-[#DEDACE] bg-white px-4 py-3 pr-12 text-[15px] text-[#14181B] outline-none transition placeholder:text-[#A6A196] focus:border-[#C08A3E] focus:ring-4 focus:ring-[#C08A3E]/15 " +
+          "w-full rounded-lg border border-[#DEDACE] bg-white px-4 py-3 pr-12 text-[15px] text-[#14181B] outline-none transition placeholder:text-[#A6A196] focus:border-[#FD5B44] focus:ring-4 focus:ring-[#FD5B44]/15 " +
           (props.className ?? "")
         }
       />

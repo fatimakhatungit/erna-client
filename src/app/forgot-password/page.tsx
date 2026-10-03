@@ -53,7 +53,7 @@ async function handleSubmit(e: FormEvent<HTMLFormElement>) {
       footer={
         <p className="text-sm text-[#6B7268]">
           Remembered your password?{" "}
-          <Link href="/login" className="font-semibold text-[#0E1B1B] hover:text-[#C08A3E]">
+          <Link href="/login" className="font-semibold text-[#0E1B1B] hover:text-[#FD5B44]">
             Back to sign in
           </Link>
         </p>

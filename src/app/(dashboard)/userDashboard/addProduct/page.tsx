@@ -318,7 +318,7 @@ export default function AddProductPage() {
   if (loadingCategories || loadingShop) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-24 text-[#6B7268]">
-        <Loader2 className="h-6 w-6 animate-spin text-[#C08A3E]" />
+        <Loader2 className="h-6 w-6 animate-spin text-[#FD5B44]" />
         <p className="text-sm">Loading your seller workspace...</p>
       </div>
     );
@@ -327,7 +327,7 @@ export default function AddProductPage() {
   if (!shop) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 rounded-2xl border border-[#DEDACE] bg-white px-6 py-20 text-center shadow-sm">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F4F2EC] text-[#C08A3E]">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#F4F2EC] text-[#FD5B44]">
           <Store size={26} />
         </div>
         <div>
@@ -341,7 +341,7 @@ export default function AddProductPage() {
         </div>
         <Link
           href="/userDashboard/createShop"
-          className="inline-flex items-center gap-2 rounded-lg bg-[#C08A3E] px-5 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#A8762F]"
+          className="inline-flex items-center gap-2 rounded-lg bg-[#FD5B44] px-5 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-[#A8762F]"
         >
           <PlusCircle size={14} />
           Create My Shop
@@ -355,10 +355,10 @@ export default function AddProductPage() {
       {/* Header */}
       <header className="mb-8">
         <div className="mb-4 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#0E1B1B] text-[#C08A3E]">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#0E1B1B] text-[#FD5B44]">
             <PackagePlus className="h-5 w-5" />
           </div>
-          <div className="h-px w-10 bg-[#C08A3E]" />
+          <div className="h-px w-10 bg-[#FD5B44]" />
           <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#9A9E96]">
             Merchant Center
           </span>
@@ -376,7 +376,7 @@ export default function AddProductPage() {
           </div>
 
           <div className="flex items-center gap-2 rounded-lg border border-[#DEDACE] bg-white px-3.5 py-2 text-xs font-semibold text-[#0E1B1B] shadow-sm">
-            <Store size={14} className="text-[#C08A3E]" />
+            <Store size={14} className="text-[#FD5B44]" />
             {shop.name}
           </div>
         </div>
@@ -398,7 +398,7 @@ export default function AddProductPage() {
           <aside className="hidden lg:block">
             <div className="sticky top-6">
               <div className="border-l-2 border-slate-200 pl-5">
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#C08A3E]">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#FD5B44]">
                   Listing
                 </p>
                 <h2 className="mt-2 text-lg font-bold text-[#0E1B1B]">
@@ -447,7 +447,7 @@ export default function AddProductPage() {
             {/* ───── Basics ───── */}
             <section className="border border-[#DEDACE] bg-white shadow-sm">
               <div className="flex items-center gap-3 border-b border-[#DEDACE] px-5 py-5 sm:px-7">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F4F2EC] text-[#C08A3E]">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F4F2EC] text-[#FD5B44]">
                   <Tag size={15} />
                 </div>
                 <div>
@@ -462,7 +462,7 @@ export default function AddProductPage() {
                 {/* Name */}
                 <div>
                   <label className="mb-2 block text-xs font-bold text-slate-700">
-                    Product name <span className="ml-1 text-[#C08A3E]">*</span>
+                    Product name <span className="ml-1 text-[#FD5B44]">*</span>
                   </label>
                   <input
                     type="text"
@@ -481,7 +481,7 @@ export default function AddProductPage() {
                 {/* Slug */}
                 <div>
                   <label className="mb-2 block text-xs font-bold text-slate-700">
-                    URL slug <span className="ml-1 text-[#C08A3E]">*</span>
+                    URL slug <span className="ml-1 text-[#FD5B44]">*</span>
                   </label>
                   <input
                     type="text"
@@ -518,7 +518,7 @@ export default function AddProductPage() {
 
                   <div>
                     <label className="mb-2 block text-xs font-bold text-slate-700">
-                      Category <span className="ml-1 text-[#C08A3E]">*</span>
+                      Category <span className="ml-1 text-[#FD5B44]">*</span>
                     </label>
                     <select
                       value={formData.category}
@@ -549,7 +549,7 @@ export default function AddProductPage() {
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
                   <div>
                     <label className="mb-2 block text-xs font-bold text-slate-700">
-                      Price ($) <span className="ml-1 text-[#C08A3E]">*</span>
+                      Price ($) <span className="ml-1 text-[#FD5B44]">*</span>
                     </label>
                     <div className="relative">
                       <DollarSign className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -587,7 +587,7 @@ export default function AddProductPage() {
 
                   <div>
                     <label className="mb-2 block text-xs font-bold text-slate-700">
-                      Stock <span className="ml-1 text-[#C08A3E]">*</span>
+                      Stock <span className="ml-1 text-[#FD5B44]">*</span>
                     </label>
                     <div className="relative">
                       <Boxes className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -613,7 +613,7 @@ export default function AddProductPage() {
                 <div>
                   <div className="mb-2 flex items-center justify-between gap-3">
                     <label className="block text-xs font-bold text-slate-700">
-                      Description <span className="ml-1 text-[#C08A3E]">*</span>
+                      Description <span className="ml-1 text-[#FD5B44]">*</span>
                     </label>
                     <button
                       type="button"
@@ -648,7 +648,7 @@ export default function AddProductPage() {
             {/* ───── Media ───── */}
             <section className="border border-[#DEDACE] bg-white shadow-sm">
               <div className="flex items-center gap-3 border-b border-[#DEDACE] px-5 py-5 sm:px-7">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F4F2EC] text-[#C08A3E]">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F4F2EC] text-[#FD5B44]">
                   <Layers size={15} />
                 </div>
                 <div>
@@ -735,7 +735,7 @@ export default function AddProductPage() {
             {/* ───── Promotions ───── */}
             <section className="border border-[#DEDACE] bg-white shadow-sm">
               <div className="flex items-center gap-3 border-b border-[#DEDACE] px-5 py-5 sm:px-7">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F4F2EC] text-[#C08A3E]">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F4F2EC] text-[#FD5B44]">
                   <Sparkles size={15} />
                 </div>
                 <div>
@@ -769,7 +769,7 @@ export default function AddProductPage() {
                       onChange={(e) =>
                         updateField("isFlashSale", e.target.checked)
                       }
-                      className="h-4 w-4 rounded border-slate-300 accent-[#C08A3E]"
+                      className="h-4 w-4 rounded border-slate-300 accent-[#FD5B44]"
                     />
                     Include in flash sale
                   </label>
@@ -780,7 +780,7 @@ export default function AddProductPage() {
                     <div>
                       <label className="mb-2 block text-xs font-bold text-slate-700">
                         Flash sale price ($){" "}
-                        <span className="ml-1 text-[#C08A3E]">*</span>
+                        <span className="ml-1 text-[#FD5B44]">*</span>
                       </label>
                       <input
                         type="number"
@@ -804,7 +804,7 @@ export default function AddProductPage() {
                     <div>
                       <label className="mb-2 block text-xs font-bold text-slate-700">
                         Flash sale end date{" "}
-                        <span className="ml-1 text-[#C08A3E]">*</span>
+                        <span className="ml-1 text-[#FD5B44]">*</span>
                       </label>
                       <input
                         type="datetime-local"
@@ -856,7 +856,7 @@ export default function AddProductPage() {
             {/* ───── Actions ───── */}
             <div className="flex flex-col-reverse gap-3 border-t border-[#DEDACE] pt-6 sm:flex-row sm:items-center sm:justify-between">
               <p className="text-[11px] text-[#9A9E96]">
-                Fields marked <span className="text-[#C08A3E]">*</span> are
+                Fields marked <span className="text-[#FD5B44]">*</span> are
                 required
               </p>
 

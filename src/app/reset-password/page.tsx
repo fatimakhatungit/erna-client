@@ -82,7 +82,7 @@ function ResetPasswordForm() {
           Remembered your password?{" "}
           <Link
             href="/login"
-            className="font-semibold text-[#0E1B1B] hover:text-[#C08A3E]"
+            className="font-semibold text-[#0E1B1B] hover:text-[#FD5B44]"
           >
             Back to sign in
           </Link>
@@ -99,7 +99,7 @@ function ResetPasswordForm() {
 
           <Link
             href="/login"
-            className="block text-center font-semibold text-[#0E1B1B] hover:text-[#C08A3E]"
+            className="block text-center font-semibold text-[#0E1B1B] hover:text-[#FD5B44]"
           >
             Continue to sign in
           </Link>
